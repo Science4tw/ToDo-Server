@@ -1,5 +1,20 @@
 package messages;
 
-public class Message_CreateLogin {
+import java.util.ArrayList;
 
+import messages.Message.NameValue;
+
+public class Message_CreateLogin extends Message {
+
+	@Override
+	protected void receiveAttributes(ArrayList<NameValue> attributes) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void sendAttributes(ArrayList<NameValue> attributes) {
+		// TODO Auto-generated method stub
+		
+	}
 }
