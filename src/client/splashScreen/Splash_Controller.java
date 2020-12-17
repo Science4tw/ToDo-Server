@@ -18,7 +18,7 @@ public class Splash_Controller extends Controller<Splash_Model, Splash_View> {
     public Splash_Controller(final JavaFX_App_Template main, Splash_Model model, Splash_View view) {
         super(model, view);
         
-        // We could monitor the progress property and pass it on to the progress bar
+     // We could monitor the progress property and pass it on to the progress bar
         // However, JavaFX can also do this for us: We just bind the progressProperty of the
         // progress bar to the progressProperty of the task.
         view.progress.progressProperty().bind(model.initializer.progressProperty());
