@@ -9,6 +9,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -21,6 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.WindowEvent;
+import server.Priority;
 
 public class App_Controller extends Controller<App_Model, App_View> {
 	public App_View view;
@@ -37,7 +40,7 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	// Konstruktor
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
-
+	
 		// *** SZENEN WECHSEL ***
 		// Wenn in der App_View der Create Button gedrückt wird,
 		// soll die Sczene gewechselt werden zu der CreateView
@@ -93,8 +96,6 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 		});
 
-		// Create Button unter Aktion setzen
-		view.getBtnCreate().setOnAction(this::newToDo);
 
 		// CreateView: Save Button unter Aktion setzen
 		view.getCreateView().getBtnSave().setOnAction(this::saveToDo);
@@ -120,6 +121,10 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		/**
 		 * Buttons beim ersten Aufruf, leeren Feldern oder keiner Änderung deaktivieren
 		 */
+		view.getBtnLogin().setDisable(true);
+		view.getBtnLogout().setDisable(true);
+		//view.getBtnCreate().setDisable(true);
+
 		view.getCreateView().getBtnSave().setDisable(true);
 
 		// register ourselves to handle window-closing event
@@ -227,21 +232,22 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 		boolean valid = false; // password not ok
 		String password = newValue;
+		Translator t = ServiceLocator.getServiceLocator().getTranslator();
 		
 		if (password.length() < MIN_LENGTH) {
-			System.out.println("Password too short. Minimum " + MIN_LENGTH + " characters are required");
+			view.setStatus(t.getString("statusLabel.passwordtooshort"));
 			valid = false;
 		} else if (password.length() < MAX_LENGTH) {
-			System.out.println("Password too long. Maximum " + MAX_LENGTH + " characters are required");
+			view.setStatus(t.getString("statusLabel.passwordtoolong"));
 			valid = false;
 		} else if (!password.matches(".*\\d.*")) {
-			System.out.println("1 digit is required");
+			view.setStatus(t.getString("statusLabel.passwortdigit"));
 			valid = false;
 		} else if (!password.matches(".*[A-Z].*")) {
-			System.out.println("1 upper case is required");
+			view.setStatus(t.getString("statusLabel.passworduppercase"));
 			valid = false;
 		} else if (!password.matches(".*[a-z].*")) {
-			System.out.println("1 lower case is required");
+			view.setStatus(t.getString("statusLabel.passwordlowercase"));
 			valid = false;
 		}
 		valid = true;
@@ -269,6 +275,11 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	private void enableLoginButton() {
 		boolean valid = passwordValid & usernameValid;
 		view.getBtnLogin().setDisable(!valid);
+		//*********NOCH àNDERN: SetDisable bei erfolgreichem Login und Login button disablen
+		view.getBtnCreate().setDisable(!valid);
+		view.getBtnLogout().setDisable(!valid);
+
+		
 
 }
 
@@ -277,7 +288,21 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	}
 
 	private void saveToDo(ActionEvent event) {
+		int ID = 1; //************MUSS NOCH ANGEPASST WERDEN
+		String todo = view.getCreateView().getTxtToDo().getText();
+		String description = view.getCreateView().getDescription().getText();
+		Priority priority = view.getCreateView().getCmbPriority().getValue();
+		String duedate = view.getCreateView().getTxtDueDate().getText();
 		
+		// 4. Überprüfen das Kontrollelemente nicht leer sind
+		if (todo != null && description != null && priority != null && duedate != null) {
+
+		// 5
+		model.createToDo(ID, todo, description, priority, duedate);
+		Translator t = ServiceLocator.getServiceLocator().getTranslator();
+		view.setStatus(t.getString("statusLabel.createToDo"));
+		view.getCreateView().reset(); 
+		}
 	}
 	// ****** SZENEN WECHSEL ******
 

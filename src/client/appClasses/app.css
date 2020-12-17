@@ -24,10 +24,6 @@
 	-fx-font-size: 14px;
 }
 
-.text-area {
-  -fx-font-family: monospace;
-  -fx-font-size: 12px;
-}
 
 #TopBox {
 	-fx-alignment: center;

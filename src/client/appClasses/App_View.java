@@ -138,9 +138,9 @@ public class App_View extends View<App_Model> {
 		topBox.setId("TopBox");
 	
 		lblIP = new Label("IP");
-	 	txtIP = new TextField("");
+	 	txtIP = new TextField("147.86.8.31");
 	 	lblPort = new Label("Port");
-	 	txtPort = new TextField("");
+	 	txtPort = new TextField("50002");
 	 	lblUsername = new Label("Username");
 	 	txtUsername = new TextField("");
 	 	lblPassword = new Label("Password");
