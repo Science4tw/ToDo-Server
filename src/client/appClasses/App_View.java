@@ -432,10 +432,10 @@ public class App_View extends View<App_Model> {
 		menuHelpShortcuts.setText(t.getString("program.menu.help.shortcuts"));
 		
 		// controls
-		txtIP.setText(t.getString("txt.IP"));
-		txtPort.setText(t.getString("txt.port"));
-		txtUsername.setText(t.getString("txt.user"));
-		txtPassword.setText(t.getString("txt.password"));
+		lblIP.setText(t.getString("lbl.IP"));
+		lblPort.setText(t.getString("lbl.port"));
+		lblUsername.setText(t.getString("lbl.user"));
+		lblPassword.setText(t.getString("lbl.password"));
 
 		btnLogin.setText(t.getString("button.login"));
 		btnCreate.setText(t.getString("button.create"));
