@@ -1,23 +1,66 @@
+
 .label {
-  -fx-font-size: 24px;
+  -fx-font-size: 14px;
   -fx-font-weight: bold;
-  -fx-font-style: italic;
-  -fx-text-fill: #008080;
-	-fx-border-insets: 5px;
-	-fx-border-color: black;
-	-fx-border-width: 2px;
+  -fx-text-fill: #1085de;
+  -fx-alignment: center-right;
+}
+
+.text-field {
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #000000;
+  -fx-alignment: center-left;
 }
 
 .button {
-  -fx-font-size: 16px;
-  -fx-font-weight: bold;
-  -fx-font-style: italic;
-  -fx-text-fill: #000000;
+  -fx-background-color: #000000, 
+	linear-gradient(#7ebcea, #2f4b8f),
+	linear-gradient(#426ab7, #263e75),
+	linear-gradient(#395cab, #223768);
+	-fx-background-inserts:0,1,2,3;
+	-fx-background-radius:3,2,2,2;
+	-fx-text-fill: white;
+	-fx-font-size: 14px;
 }
 
-.menu .label {
+.text-area {
+  -fx-font-family: monospace;
   -fx-font-size: 12px;
-  -fx-font-weight: bold;
-  -fx-text-fill: #800080;
-  -fx-border-width: 0px;
+}
+
+#TopBox {
+	-fx-alignment: center;
+	-fx-spacing: 5px;
+}
+
+#BottomBox {
+	-fx-alignment: center;
+	-fx-spacing: 5px;
+}
+
+#IP {
+	-fx-pref-width: 200px;
+}
+
+#Port {
+	-fx-pref-width: 200px;
+}
+
+
+
+.usernameok {
+  -fx-text-fill: green;
+}
+
+.usernameNotOk {
+  -fx-text-fill: red;
+}
+
+.passwordOk {
+  -fx-text-fill: green;
+}
+
+.passwordNotOk {
+  -fx-text-fill: red;
 }
