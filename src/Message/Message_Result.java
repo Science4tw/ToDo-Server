@@ -9,7 +9,7 @@ import server.Client;
 
 public class Message_Result extends Message {
 
-	// Konstruktor für Ping Befehl
+	// Konstruktor für meiste Messages
 	public Message_Result(Class<?> msgClass, boolean result) {
 		super(new String[] { "Result | ", msgClass.getSimpleName(), Boolean.toString(result)
 
@@ -21,6 +21,16 @@ public class Message_Result extends Message {
 
 		});
 	}
+	
+	// für erfolgreiches Login
+	public Message_Result(Class<?> msgClass, boolean result, String token) {
+		super(new String[] { "Result | ", msgClass.getSimpleName(), Boolean.toString(result), token
+				
+		});		
+	}
+	
+
+	
 	@Override
 	public void process(Client client) {
 		// TODO Auto-generated method stub

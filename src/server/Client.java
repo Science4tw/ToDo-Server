@@ -24,6 +24,8 @@ public class Client implements Sendable {
 
 	// Jeder Client hat auch einen Account
 	Account account = null;
+	private String token = null;
+
 
 	@Override
 	public String getName() {
@@ -66,6 +68,10 @@ public class Client implements Sendable {
 
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }
