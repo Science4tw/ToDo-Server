@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.time.Instant;
 import java.util.ArrayList;
 
-import messages.Message;
+import Message.Message;
 
 /**
  * Aus der Sicht des Servers repräsentiert diese Klasse den Client.

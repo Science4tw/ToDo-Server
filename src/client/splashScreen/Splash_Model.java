@@ -65,7 +65,7 @@ public class Splash_Model extends Model {
      * console-handler.
      * 
      * We set the level of the console-handler to "INFO", so that the console
-     * only receives the more important messages. The levels of the loggers and
+     * only receives the more important Message. The levels of the loggers and
      * the file-handler are set to "FINEST".
      */
     private Logger configureLogging() {

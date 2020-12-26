@@ -1,9 +1,9 @@
 package server;
 
-import messages.Message;
+import Message.Message;
 
 /**
- * We can send messages to a class that implements this interface.
+ * We can send Message to a class that implements this interface.
  */
 public interface Sendable {
 	

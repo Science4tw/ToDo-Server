@@ -7,10 +7,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import messages.Message;
-import messages.MessageType;
-import messages.Message_Ping;
-import messages.Message_Result;
+import Message.Message;
+import Message.MessageType;
+import Message.Message_Ping;
+import Message.Message_Result;
 
 public class ServerThreadForClient extends Thread {
 
@@ -23,6 +23,8 @@ public class ServerThreadForClient extends Thread {
 
 	/**
 	 * Konstruktor
+	 * Wir möchten pro CLient, welcehr sich anmeldet eine Verbindung öffnen und während
+	 * der Dauer der Verbindung soll der ServerSocket
 	 * 
 	 * @param clientSocket
 	 */
@@ -40,7 +42,7 @@ public class ServerThreadForClient extends Thread {
 	}
 
 	/**
-	 * Process messages solange die Verbindung steht
+	 * Process Message solange die Verbindung steht
 	 */
 	@Override
 	public void run() {
@@ -51,9 +53,9 @@ public class ServerThreadForClient extends Thread {
 		try {
 			System.out.println("Methode run: ");
 			Message msgIn = Message.empfangen(clientSocket);
-			System.out.println(msgIn.toString());
+			System.out.println("ServerThreaadForClient: Methode run: msgIn.toString = " + msgIn.toString());
 			Message msgOut = processMessage(msgIn);
-			System.out.println(msgOut.toString());
+			System.out.println("ServerThreaadForClient: Methode run: msgOut.toString = " + msgOut.toString());
 			msgOut.senden(clientSocket);
 
 		} catch (Exception e) {
@@ -72,11 +74,14 @@ public class ServerThreadForClient extends Thread {
 		System.out.println("Methode processMessage: ");
 
 		Message msgOut = null;
-
+		
+		System.out.println("Methode processMessage: " + MessageType.getType(msgIn).toString());
 		switch (MessageType.getType(msgIn)) {
+		
 		case Ping:
 			System.out.println("Methode processMessage: ");
-			msgOut = new Message_Result(null, isDaemon());
+			msgOut = new Message_Result(isDaemon());
+			System.out.println("Methode processMessage: " + msgOut.toString());
 			break;
 		default:
 			System.out.println("Methode processMessage: ");

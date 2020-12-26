@@ -1,4 +1,4 @@
-package messages;
+package Message;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -7,8 +7,6 @@ import java.lang.reflect.Constructor;
 import java.net.Socket;
 
 import server.Client;
-
-
 
 public abstract class Message {
 
@@ -67,44 +65,49 @@ public abstract class Message {
 			System.out.println("Methode empfangen: ");
 			try {
 				// Wenn "|" im Nachrichteninhalt vorhanden ist
-				if (messageText.contains("|") == true) {
-					// Break message into individual parts, and remove extra spaces
-					String[] parts = messageText.split("\\|");
-					for (int i = 0; i < parts.length; i++) {
-						parts[i] = parts[i].trim();
-					}
-					System.out.println("Methode empfangen: ");
-					String messageClassName = Message.class.getPackage().getName() + "." + parts[0];
-					try {
-						Class<?> messageClass = Class.forName(messageClassName);
-						Constructor<?> constructor = messageClass.getConstructor(String[].class);
-						message = (Message) constructor.newInstance(new Object[] { parts });
-						System.out.println("Methode empfangen: ");
-					} catch (Exception e) {
-						System.out.println(e.toString());
-
-					}
-					// Wenn "|" NICHT im Nachrichteninhalt vorhanden ist
-				} else {
-					String[] part = new String[0];
-					for (int i = 0; i < part.length; i++) {
-						part[i] = part[i].trim();
-					}
-					System.out.println("Methode empfangen: ");
-					String messageClassName = Message.class.getPackage().getName() + "." + part[0];
-					try {
-						Class<?> messageClass = Class.forName(messageClassName);
-						Constructor<?> constructor = messageClass.getConstructor(String[].class);
-						message = (Message) constructor.newInstance(new Object[] { part });
-						System.out.println("Methode empfangen: ");
-						
-					} catch (Exception e) {
-						System.out.println(e.toString());
-
-					}
+//				if (messageText.contains("|") == true) {
+				// Break message into individual parts, and remove extra spaces
+				String[] parts = messageText.split("\\|");
+				for (int i = 0; i < parts.length; i++) {
+					parts[i] = parts[i].trim();
 				}
-				
-				
+				if (parts[0].equals("Ping")) message = new Message_Ping(parts);
+				System.out.println("Methode empfangen: parts = " + parts);
+//				System.out.println("Methode empfangen: IF ");
+//				String messageClassName = Message.class.getPackage().getName() + "_" + parts[0];
+//				
+//				System.out.println(messageClassName.toString() + " - " + messageClassName);
+//				try {
+//					Class<?> messageClass = Class.forName(messageClassName); 
+//					System.out.println(messageClass.toString() + " - " + messageClass);
+//					
+//					Constructor<?> constructor = messageClass.getConstructor(String[].class);
+//					message = (Message) constructor.newInstance(new Object[] { parts });
+//					System.out.println("Methode empfangen: If im try Teil ");
+//				} catch (Exception e) {
+//					System.out.println(e.toString());
+//
+//				}
+				// Wenn "|" NICHT im Nachrichteninhalt vorhanden ist
+//				} 
+//				else {
+//					String[] part = new String[];
+//					for (int i = 0; i < part.length; i++) {
+//						part[i] = part[i].trim();
+//					}
+//					System.out.println("Methode empfangen: else");
+//					String messageClassName = Message.class.getPackage().getName() + "." + part[0];
+//					try {
+//						Class<?> messageClass = Class.forName(messageClassName);
+//						Constructor<?> constructor = messageClass.getConstructor(String[].class);
+//						message = (Message) constructor.newInstance(new Object[] { part });
+//						System.out.println("Methode empfangen: else im try Teil");
+//
+//					} catch (Exception e) {
+//						System.out.println(e.toString());
+//
+//					}
+//				}
 
 			} catch (Exception e) {
 				System.out.println(e.toString());

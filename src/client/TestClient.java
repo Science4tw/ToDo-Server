@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * This is a really simple test client: It reads from the scanner, sends to the
  * server, and prints the server's response. This is all in plain-text - it is
- * up to the user to type in correctly formatted messages.
+ * up to the user to type in correctly formatted Message.
  */
 public class TestClient {
 
@@ -36,7 +36,7 @@ public class TestClient {
 				 BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				 OutputStreamWriter socketOut = new OutputStreamWriter(socket.getOutputStream())) {
 				System.out.println("Connected");
-				// Create thread to read incoming messages
+				// Create thread to read incoming Message
 				Runnable r = new Runnable() {
 					@Override
 					public void run() {
@@ -54,7 +54,7 @@ public class TestClient {
 				Thread t = new Thread(r);
 				t.start();
 
-				// Allowing the user to send messages to the server
+				// Allowing the user to send Message to the server
 				// Note: We are using the same Scanner defined earlier
 				System.out.println("Enter commands to server or ctrl-D to quit");
 				while (in.hasNext()) {

@@ -2,8 +2,8 @@ package testOrGarbage;
 
 import java.util.ArrayList;
 
+import Message.Message.NameValue;
 import client.TestClient;
-import messages.Message.NameValue;
 
 public class Message_Ping extends Message {
 	

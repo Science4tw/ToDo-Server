@@ -2,7 +2,7 @@ package testOrGarbage;
 
 import java.util.ArrayList;
 
-import messages.Message.NameValue;
+import Message.Message.NameValue;
 
 public class Message_Result extends Message {
 

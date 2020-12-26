@@ -1,4 +1,4 @@
-package messages;
+package Message;
 
 import java.net.Socket;
 import java.util.ArrayList;
