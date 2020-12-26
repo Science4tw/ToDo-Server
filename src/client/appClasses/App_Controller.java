@@ -24,16 +24,14 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.WindowEvent;
 import server.Priority;
+import server.ToDo;
 
 public class App_Controller extends Controller<App_Model, App_View> {
 	public App_View view;
 	public App_Model model;
 
 	ServiceLocator serviceLocator;
-
-	private final static int MIN_LENGTH = 3;
-	private final static int MAX_LENGTH = 20;
-
+	
 	private boolean usernameValid = false;
 	private boolean passwordValid = false;
 
@@ -234,10 +232,10 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		String password = newValue;
 		Translator t = ServiceLocator.getServiceLocator().getTranslator();
 		
-		if (password.length() < MIN_LENGTH) {
+		if (password.length() < 3) {
 			view.setStatus(t.getString("statusLabel.passwordtooshort"));
 			valid = false;
-		} else if (password.length() < MAX_LENGTH) {
+		} else if (password.length() < 20) {
 			view.setStatus(t.getString("statusLabel.passwordtoolong"));
 			valid = false;
 		} else if (!password.matches(".*\\d.*")) {
