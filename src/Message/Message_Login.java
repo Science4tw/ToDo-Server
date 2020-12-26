@@ -3,7 +3,8 @@ package Message;
 import server.Account;
 import server.Client;
 
-//Login, wenn account bereits vorhanden ist. wenn erfolgreich, authentication token für client wird zurückgegeben
+//Login, wenn account bereits vorhanden ist
+//wenn erfolgreich, authentication token für client wird zurückgegeben
 public class Message_Login extends Message {
 	private String username;
 	private String password;
