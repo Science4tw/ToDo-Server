@@ -39,6 +39,8 @@ public class App_View extends View<App_Model> {
 
 	// VIEW
 	private CreateView createView;
+	private CreateAccountView createAccountView;
+	private ChangePasswordView changePasswordView;
 
 	// SZENEN
 	private Scene splashScene;
@@ -49,6 +51,9 @@ public class App_View extends View<App_Model> {
 	//Menu
 	protected Menu menuFile;
 	protected Menu menuFileLanguage;
+	protected Menu menuAccount;
+	protected MenuItem menuAccountCreate;
+	protected MenuItem menuAccountPassword;
 	protected Menu menuHelp;
 	protected MenuItem menuHelpShortcuts;
 
@@ -298,6 +303,8 @@ public class App_View extends View<App_Model> {
 		public void setMenuHelpShortcuts(MenuItem menuHelpShortcuts) {
 			this.menuHelpShortcuts = menuHelpShortcuts;
 		}
+		
+		
 
 		//Getter & Setter für Buttons
 		public Button getBtnCreate() {
@@ -364,12 +371,25 @@ public class App_View extends View<App_Model> {
 		}
 		
 		// ***** VIEW ***** 
-		// Getter & Setter für die CountryView
+		// Getter & Setter für die views
 		public CreateView getCreateView() {
 			return this.createView;
 		}
 		public void setCreateView(CreateView createView) {
 			this.createView = createView;
+		}
+		public CreateAccountView getCreateAccountView() {
+			return this.createAccountView;
+		}
+		public void setCreateAccountView(CreateAccountView createAccountView) {
+			this.createAccountView = createAccountView;
+		}
+		
+		public ChangePasswordView getChangePasswordView() {
+			return this.changePasswordView;
+		}
+		public void setChangePasswordView(ChangePasswordView changePasswordView) {
+			this.changePasswordView = changePasswordView;
 		}
 		
 	protected Scene create_GUI() {
@@ -394,8 +414,15 @@ public class App_View extends View<App_Model> {
 		menuHelp = new Menu();
 		menuHelpShortcuts = new MenuItem("Shortcuts");
 		menuHelp.getItems().add(menuHelpShortcuts);
-		menuBar.getMenus().addAll(menuFile, menuHelp);
+		
 
+		menuAccount = new Menu();
+		menuAccountCreate = new MenuItem("Account erstellen");
+		menuAccountPassword = new MenuItem("Passwort ändern");
+		menuAccount.getItems().addAll(menuAccountCreate, menuAccountPassword);
+
+		menuBar.getMenus().addAll(menuAccount, menuFile, menuHelp);
+		
 		GridPane root = new GridPane();
 		root.add(menuBar, 0, 0);
 		
@@ -431,7 +458,10 @@ public class App_View extends View<App_Model> {
 		menuFileLanguage.setText(t.getString("program.menu.language"));
 		menuHelp.setText(t.getString("program.menu.help"));
 		menuHelpShortcuts.setText(t.getString("program.menu.help.shortcuts"));
-		
+		menuAccount.setText(t.getString("program.menu.account"));
+		menuAccountCreate.setText(t.getString("program.menu.accountCreate"));
+		menuAccountPassword.setText(t.getString("program.menu.accountPassword"));
+
 		// controls
 		lblIP.setText(t.getString("lbl.IP"));
 		lblPort.setText(t.getString("lbl.port"));
