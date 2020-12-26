@@ -1,14 +1,18 @@
 package server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import messages.Message;
 import messages.MessageType;
-import messages.Message_Error;
 import messages.Message_Ping;
+import messages.Message_Result;
 
-public class ClientThread extends Thread {
+public class ServerThreadForClient extends Thread {
 
 	/**
 	 * Instanzvariablen
@@ -20,9 +24,9 @@ public class ClientThread extends Thread {
 	/**
 	 * Konstruktor
 	 * 
-	 * @param socketForClient
+	 * @param clientSocket
 	 */
-	public ClientThread(Socket clientSocket) {
+	public ServerThreadForClient(Socket clientSocket) {
 		super("Client thread " + clientCounter);
 		this.clientID = clientCounter++;
 		this.clientSocket = clientSocket;
@@ -41,13 +45,19 @@ public class ClientThread extends Thread {
 	@Override
 	public void run() {
 
+		System.out.println("Die " + getClientIDAsText() + " ist jetzt mit dem Server verbunden.");
+
+		// Read a message from the client
 		try {
-			// Read a message from the client
-			Message msgIn = Message.receive(clientSocket);
+			System.out.println("Methode run: ");
+			Message msgIn = Message.empfangen(clientSocket);
+			System.out.println(msgIn.toString());
 			Message msgOut = processMessage(msgIn);
-			msgOut.send(clientSocket);
+			System.out.println(msgOut.toString());
+			msgOut.senden(clientSocket);
 
 		} catch (Exception e) {
+			System.out.println(e.toString());
 
 		} finally {
 			try {
@@ -58,34 +68,29 @@ public class ClientThread extends Thread {
 		}
 	}
 
-    private Message processMessage(Message msgIn) {
-
+	private Message processMessage(Message msgIn) {
+		System.out.println("Methode processMessage: ");
 
 		Message msgOut = null;
+
 		switch (MessageType.getType(msgIn)) {
 		case Ping:
-			msgOut = new Message_Ping();
+			System.out.println("Methode processMessage: ");
+			msgOut = new Message_Result(null, isDaemon());
 			break;
-//		case NewCustomer:
-//			Message_NewCustomer nc_msg = (Message_NewCustomer) msgIn;
-//			Message_NewCustomerAccepted nca_msg = new Message_NewCustomerAccepted();
-//			nca_msg.setName(nc_msg.getName());
-//			msgOut = nca_msg;
-//			break;
-//		case Goodbye:
-//			msgOut = new Message_Goodbye();
-//			break;
 		default:
-			msgOut = new Message_Error();
+			System.out.println("Methode processMessage: ");
+			msgOut = null;
 		}
 
-    	return msgOut;
-    }
+		return msgOut;
+	}
 
 	/**
 	 * GETTER & SETTER
 	 */
 	public Socket getClientSocket() {
+
 		return clientSocket;
 	}
 
@@ -98,7 +103,7 @@ public class ClientThread extends Thread {
 	}
 
 	public static void setClientCounter(Integer clientCounter) {
-		ClientThread.clientCounter = clientCounter;
+		ServerThreadForClient.clientCounter = clientCounter;
 	}
 
 	public Integer getClientID() {

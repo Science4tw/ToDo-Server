@@ -1,4 +1,4 @@
-package messages;
+package testOrGarbage;
 
 import static org.junit.jupiter.api.Assertions.*;
 

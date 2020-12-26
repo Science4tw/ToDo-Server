@@ -1,26 +1,36 @@
 package messages;
 
+import java.net.Socket;
 import java.util.ArrayList;
 
-import messages.Message.NameValue;
+
+import server.Client;
+
+
 
 public class Message_Ping extends Message {
 	
+	String token;
+	
 	
 	// Konstruktor
-	public Message_Ping() {
-		super();
+	public Message_Ping(String[] nachrichtenInhalt) {
+		super(nachrichtenInhalt);
+		this.token = null;
 	}
+
+
 
 	@Override
-	protected void receiveAttributes(ArrayList<NameValue> attributes) {
-		// TODO Auto-generated method stub
-
+	public void process(Client client) {
+		boolean result = (token == null);
+		client.senden(new Message_Result(this.getClass(), result));
+		
 	}
 
-	@Override
-	protected void sendAttributes(ArrayList<NameValue> attributes) {
-		// TODO Auto-generated method stub
 
-	}
+
+
+
+	
 }

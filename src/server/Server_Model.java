@@ -33,7 +33,7 @@ public class Server_Model extends Thread {
 			while (true) {
 				// Wait for request, then create input/output streams to talk to the client
 				Socket socket = listener.accept();
-				ClientThread client = new ClientThread(socket);
+				ServerThreadForClient client = new ServerThreadForClient(socket);
 				client.start();
 			}
 		} catch (Exception e) {

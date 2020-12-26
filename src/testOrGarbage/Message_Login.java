@@ -1,10 +1,10 @@
-package messages;
+package testOrGarbage;
 
 import java.util.ArrayList;
 
 import messages.Message.NameValue;
 
-public class Message_CreateLogin extends Message {
+public class Message_Login extends Message {
 
 	@Override
 	protected void receiveAttributes(ArrayList<NameValue> attributes) {
@@ -17,4 +17,5 @@ public class Message_CreateLogin extends Message {
 		// TODO Auto-generated method stub
 		
 	}
+
 }

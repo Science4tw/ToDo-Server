@@ -1,10 +1,10 @@
-package messages;
+package testOrGarbage;
 
 import java.util.ArrayList;
 
 import messages.Message.NameValue;
 
-public class Message_DeleteToDo extends Message {
+public class Message_Logout extends Message {
 
 	@Override
 	protected void receiveAttributes(ArrayList<NameValue> attributes) {
