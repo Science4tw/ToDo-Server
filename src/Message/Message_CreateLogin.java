@@ -8,10 +8,10 @@ public class Message_CreateLogin extends Message {
 	private String username;
 	private String password;
 
-	public Message_CreateLogin(String[] data) {
-		super(data);
-		this.username = data[1];
-		this.password = data[2];
+	public Message_CreateLogin(String[] nachrichtenInhalt) {
+		super(nachrichtenInhalt);
+		this.username = nachrichtenInhalt[1];
+		this.password = nachrichtenInhalt[2];
 	}
 
 	// User kann account mit emailadresse und password erstellen, wenn noch nicht vorhanden

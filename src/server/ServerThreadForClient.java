@@ -83,6 +83,26 @@ public class ServerThreadForClient extends Thread {
 			msgOut = new Message_Result(isDaemon());
 			System.out.println("Methode processMessage: " + msgOut.toString());
 			break;
+		case CreateLogin:
+			System.out.println("Methode processMessage: ");
+			msgOut = new Message_Result(isDaemon());
+			System.out.println("Methode processMessage: " + msgOut.toString());
+			break;
+		case Login:
+			System.out.println("Methode processMessage: ");
+			msgOut = new Message_Result(isDaemon());
+			System.out.println("Methode processMessage: " + msgOut.toString());
+			break;
+		case Logout:
+			System.out.println("Methode processMessage: ");
+			msgOut = new Message_Result(isDaemon());
+			System.out.println("Methode processMessage: " + msgOut.toString());
+			break;
+		case ChangePassword:
+			System.out.println("Methode processMessage: ");
+			msgOut = new Message_Result(isDaemon());
+			System.out.println("Methode processMessage: " + msgOut.toString());
+			break;
 		default:
 			System.out.println("Methode processMessage: ");
 			msgOut = null;

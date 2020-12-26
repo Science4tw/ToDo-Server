@@ -11,6 +11,8 @@ public class Server {
 		
 		System.out.println("ToDo-Server startet...");
 
+		
+				
 		// try-with-Ressource (try/catch/finnaly wäre "unsichtbar" fuer uns geschrieben)
 		try (ServerSocket listener = new ServerSocket(port, 100, null)) { // ServerSocket überwacht Port
 

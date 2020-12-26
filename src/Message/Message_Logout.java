@@ -4,9 +4,9 @@ import server.Client;
 
 //für Logout aus account
 public class Message_Logout extends Message {
-
-	public Message_Logout(String[] data) {
-		super(data);
+	
+	public Message_Logout(String[] nachrichtenInhalt) {
+		super(nachrichtenInhalt);
 	}
 	
 	public void process(Client client) {

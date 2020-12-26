@@ -25,10 +25,13 @@ public class Account {
 
 	//für password und hashing
 	private String hashedPassword;
+	//zum event time-stamps in der application aufzunehmen
 	private Instant lastLogin;
 	
+	//generiert krpto zufallswert
 	private static final SecureRandom rand = new SecureRandom();
 	private static final int iterations = 127;
+	//salt value: 64 byte lang
 	private final byte[] salt = new byte[64];
 	
 	
@@ -72,6 +75,10 @@ public class Account {
 		boolean success = hashedPassword.equals(newHash);
 		if (success) this.lastLogin = Instant.now();
 		return success;
+	}
+	public void changePassword(String newPassword) {
+		rand.nextBytes(salt); // password wird mit "salt" geändert
+		this.hashedPassword = hash(newPassword);
 	}
 
 	/**

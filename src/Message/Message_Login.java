@@ -9,10 +9,10 @@ public class Message_Login extends Message {
 	private String username;
 	private String password;
 
-	public Message_Login(String[] data) {
-		super(data);
-		this.username = data[1];
-		this.password = data[2];
+	public Message_Login(String[] nachrichtenInhalt) {
+		super(nachrichtenInhalt);
+		this.username = nachrichtenInhalt[1];
+		this.password = nachrichtenInhalt[2];
 	}
 
 	@Override

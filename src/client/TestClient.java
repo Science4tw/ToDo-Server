@@ -68,7 +68,7 @@ public class TestClient {
 			}
 		}
 	}
-
+	
 	private static boolean validatePortNumber(String portText) {
 		boolean formatOK = false;
 		try {

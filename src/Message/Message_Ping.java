@@ -1,16 +1,11 @@
 package Message;
 
-import java.net.Socket;
-import java.util.ArrayList;
-
 
 import server.Client;
 
-
-
 public class Message_Ping extends Message {
 	
-	String token;
+	private String token;
 	
 	
 	// Konstruktor

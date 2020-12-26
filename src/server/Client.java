@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import Message.Message;
+import Message.Message_Error;
 
 /**
  * Aus der Sicht des Servers repräsentiert diese Klasse den Client.
@@ -16,24 +18,89 @@ import Message.Message;
 
 public class Client implements Sendable {
 
+	//*********brauchen wir logger? ***********
+	private static Logger logger = Logger.getLogger("");
+
 	// Socket für Verbindung
-	Socket clientSocket;
+	private Socket clientSocket;
 
 	// Liste um die Clients zu speichern
-	ArrayList<Client> clients = new ArrayList<>();
+	private static final ArrayList<Client> clients = new ArrayList<>();
 
 	// Jeder Client hat auch einen Account
-	Account account = null;
+	private Account account = null;
 	private String token = null;
 
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
+	private boolean clientReachable = true;
+	private Instant lastUsage;
+	
+	
+	//neuer client hinzufügen zu clients
+	public static void add(Client client) {
+		synchronized (clients) {
+			clients.add(client);
+		}
+	}
+	
+	//sucht Client nach username und gibt diesen zurück
+	public static Client exists(String username) {
+		synchronized (clients) {
+			for (Client c : clients) {
+				if (c.getAccount() != null && c.getName().equals(username)) 
+					return c;
+			}
+		}
 		return null;
 	}
+	
+	//neues client objekt, kommuniziert über socket. 
+	//Startet sofort mit messages von client zu empfangen
+	public Client(Socket socket) {
+		this.clientSocket = socket;
+		this.lastUsage = Instant.now();
 
-	@Override
+		// Thread um messages zu lesen
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					while (clientReachable) {
+						Message msg = Message.empfangen(socket);
+
+						// Note syntax "Client.this" - writing "this" would reference Runnable object
+						if (msg != null)
+							msg.process(Client.this);
+						else { 
+							// wenn ungültig oder socket nicht korrekt
+							Client.this.senden(new Message_Error());
+						}
+
+						lastUsage = Instant.now();
+					}
+				} catch (Exception e) {
+					logger.info("Client " + Client.this.getName() + " disconnected");
+				} finally {
+					// When the client is no longer reachable, remove authentication and account
+					token = null;
+					account = null;
+				}
+			}
+		};
+		Thread t = new Thread(r);
+		t.start();
+		logger.info("New client created: " + this.getName());
+	}
+	
+	
+	@Override //aus Sendable
+	public String getName() {
+		String name = null;
+		if (account != null) name = account.getUserName();
+		return name;
+	}
+
+	@Override //aus Sendable
+	//sendet message an client
 	public void senden(Message message) {
 		try {
 			message.senden(clientSocket);
@@ -50,16 +117,8 @@ public class Client implements Sendable {
 		return clientSocket;
 	}
 
-	public void setClientSocket(Socket clientSocket) {
-		this.clientSocket = clientSocket;
-	}
-
 	public ArrayList<Client> getClients() {
 		return clients;
-	}
-
-	public void setClients(ArrayList<Client> clients) {
-		this.clients = clients;
 	}
 
 	public Account getAccount() {
@@ -74,4 +133,11 @@ public class Client implements Sendable {
 		this.token = token;
 	}
 
+	public String getToken() {
+		return token;
+	}
+
+	public Instant getLastUsage() {
+		return lastUsage;
+	}
 }

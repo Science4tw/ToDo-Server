@@ -22,7 +22,7 @@ public class Message_Result extends Message {
 		});
 	}
 	
-	// für erfolgreiches Login
+	// Konstruktor für erfolgreiches Login
 	public Message_Result(Class<?> msgClass, boolean result, String token) {
 		super(new String[] { "Result | ", msgClass.getSimpleName(), Boolean.toString(result), token
 				
