@@ -16,19 +16,22 @@ public class Account {
 	String userName;
 	String password;
 	
-	private String hashedPassword;
-	private Instant lastLogin;
+	
 
 	private static Logger logger = Logger.getLogger("");
 
 	// Liste für die Accounts
 	private static final ArrayList<Account> accounts = new ArrayList<>();
 
-	//Hash password
+	//für password und hashing
+	private String hashedPassword;
+	private Instant lastLogin;
+	
 	private static final SecureRandom rand = new SecureRandom();
 	private static final int iterations = 127;
 	private final byte[] salt = new byte[64];
-
+	
+	
 	
 	// Konstruktor
 	public Account(String username, String password) {
@@ -38,18 +41,14 @@ public class Account {
 
 	}
 	
-	/**
-	 * Add a new account to our list of valid accounts
-	 */
+	//Fügt account arrayliste accounts hinzu
 	public static void add(Account account) {
 		synchronized (accounts) {
 			accounts.add(account);
 		}
 	}
 
-	/**
-	 * Remove a account from our list of valid accounts
-	 */
+	// entfernt account von arraylist accounts
 	public static void remove(Account account) {
 		synchronized (accounts) {
 			for (Iterator<Account> i = accounts.iterator(); i.hasNext();) {
@@ -58,9 +57,7 @@ public class Account {
 		}
 	}
 	
-	/**
-	 * Find and return an existing account
-	 */
+	//sucht, ob account schon vorhanden ist und gibt diesen zurück, falls ja
 	public static Account exists(String username) {
 		synchronized (accounts) {
 			for (Account account : accounts) {
@@ -117,21 +114,8 @@ public class Account {
 		return accounts;
 	}
 
-/*
-	public void setAccounts(ArrayList<Account> accounts) {
-		this.accounts = accounts;
-	}
-	*/
 	
-	/**
-	 * There are many sources of info on how to securely hash passwords. I'm not a
-	 * crypto expert, so I follow the recommendations of the experts. Here are two
-	 * examples:
-	 * 
-	 * https://crackstation.net/hashing-security.htm
-	 * 
-	 * https://howtodoinjava.com/security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
-	 */
+	//Hashed passwort
 	private String hash(String password) {
 		try {
 			char[] chars = password.toCharArray();
@@ -145,7 +129,6 @@ public class Account {
 			return null; // Will never execute, but keeps Java happy
 		}
 	}
-	// From: https://stackoverflow.com/questions/9655181/how-to-convert-a-byte-array-to-a-hex-string-in-java
 		private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
 		public static String bytesToHex(byte[] bytes) {
