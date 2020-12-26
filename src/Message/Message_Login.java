@@ -3,10 +3,7 @@ package Message;
 import server.Account;
 import server.Client;
 
-/**
- * Login to an existing account. If successful, return an authentication token
- * to the client.
- */
+//Login, wenn account bereits vorhanden ist. wenn erfolgreich, authentication token für client wird zurückgegeben
 public class Message_Login extends Message {
 	private String username;
 	private String password;
@@ -20,7 +17,7 @@ public class Message_Login extends Message {
 	@Override
 	public void process(Client client) {
 		Message reply;
-		// Find existing login matching the username
+		// Sucht bestehende Logins passend zum Username
 		Account account = Account.exists(username);
 		if (account != null && account.checkPassword(password)) {
 			client.setAccount(account);
@@ -30,6 +27,7 @@ public class Message_Login extends Message {
 		} else {
 			reply = new Message_Result(this.getClass(), false);
 		}
+		//sendet result
 		client.senden(reply);
 	}
 }

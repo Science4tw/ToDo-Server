@@ -3,10 +3,7 @@ package Message;
 import server.Client;
 import server.Account;
 
-/**
- * Create a completely new login. After creating an account, the user must still
- * login!
- */
+//Neues Login/account erstellen
 public class Message_CreateLogin extends Message {
 	private String username;
 	private String password;
@@ -17,10 +14,7 @@ public class Message_CreateLogin extends Message {
 		this.password = data[2];
 	}
 
-	/**
-	 * We can only create a new account if the password is 3-20 characters with 1 digit, 1 upper- and 1 lowercase, 
-	 * username is an email-adress and is not in use as a user 
-	 */
+	// User kann account mit emailadresse und password erstellen, wenn noch nicht vorhanden
 	public void process(Client client) {
 		boolean result = false;
 		
@@ -31,7 +25,7 @@ public class Message_CreateLogin extends Message {
 					String[] domainParts = addressParts[1].split("\\."); // Backslash hebt special characters aus
 					if (domainParts.length >= 2) { // erwartet 2 teile für provider
 						
-			
+			//Prüft Password: mind. 3, max. 20 Zeichen, mind. 1 digit, 1 Gross- und 1 Kleinbuchstaben
 			if (password != null && password.length() > 3 && password.length() < 20 && !password.matches(".*\\d.*") 
 					&& !password.matches(".*[A-Z].*") && !password.matches(".*[a-z].*")) { 
 				
@@ -45,6 +39,7 @@ public class Message_CreateLogin extends Message {
 		}
 	}
 			
+		//sendet result
 		client.senden(new Message_Result(this.getClass(), result));
 			}
 		}}
