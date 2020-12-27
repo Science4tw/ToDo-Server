@@ -1,6 +1,7 @@
 package Message;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
@@ -72,6 +73,7 @@ public abstract class Message {
 					parts[i] = parts[i].trim();
 				}
 				if (parts[0].equals("Ping")) message = new Message_Ping(parts);
+				
 				System.out.println("Methode empfangen: parts = " + parts);
 //				System.out.println("Methode empfangen: IF ");
 //				String messageClassName = Message.class.getPackage().getName() + "_" + parts[0];
@@ -125,6 +127,7 @@ public abstract class Message {
 
 		return message;
 	}
+			 
 
 	/**
 	 * Jeder Part des String[] mit nachrichtenInhalt wird mit einem "|" getrennt

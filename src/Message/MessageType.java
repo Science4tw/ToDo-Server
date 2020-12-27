@@ -33,10 +33,10 @@ public enum MessageType {
     public static MessageType getType(Message msg) {
     	MessageType type = MessageType.Error;
     	if (msg instanceof Message_Ping) type = Ping;
-//    	if (msg instanceof Message_Login) type = Login;
-//    	else if (msg instanceof Message_Logout) type = Logout;
-//    	else if (msg instanceof Message_ChangePassword) type = ChangePassword;
-//    	else if (msg instanceof Message_CreateLogin) type = CreateLogin;
+    	else if (msg instanceof Message_Login) type = Login;
+    	else if (msg instanceof Message_Logout) type = Logout;
+    	else if (msg instanceof Message_ChangePassword) type = ChangePassword;
+    	else if (msg instanceof Message_CreateLogin) type = CreateLogin;
 //    	else if (msg instanceof Message_CreateToDo) type = CreateToDo;
 //    	else if (msg instanceof Message_DeleteToDo) type = DeleteToDo;
 

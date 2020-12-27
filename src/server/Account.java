@@ -17,9 +17,6 @@ public class Account {
 	String password;
 	
 	
-
-	private static Logger logger = Logger.getLogger("");
-
 	// Liste für die Accounts
 	private static final ArrayList<Account> accounts = new ArrayList<>();
 
@@ -131,7 +128,7 @@ public class Account {
 			byte[] hash = skf.generateSecret(spec).getEncoded();
 			return bytesToHex(hash);
 		} catch (Exception e) {
-			logger.severe("Secure password hashing not possible - stopping server");
+			System.out.println("Secure password hashing not possible - stopping server");
 			System.exit(0);
 			return null; // Will never execute, but keeps Java happy
 		}

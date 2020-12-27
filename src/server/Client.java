@@ -18,9 +18,6 @@ import Message.Message_Error;
 
 public class Client implements Sendable {
 
-	//*********brauchen wir logger? ***********
-	private static Logger logger = Logger.getLogger("");
-
 	// Socket für Verbindung
 	private Socket clientSocket;
 
@@ -31,9 +28,7 @@ public class Client implements Sendable {
 	private Account account = null;
 	private String token = null;
 
-	private boolean clientReachable = true;
-	private Instant lastUsage;
-	
+	private boolean clientReachable = true;	
 	
 	//neuer client hinzufügen zu clients
 	public static void add(Client client) {
@@ -57,7 +52,6 @@ public class Client implements Sendable {
 	//Startet sofort mit messages von client zu empfangen
 	public Client(Socket socket) {
 		this.clientSocket = socket;
-		this.lastUsage = Instant.now();
 
 		// Thread um messages zu lesen
 		Runnable r = new Runnable() {
@@ -75,10 +69,9 @@ public class Client implements Sendable {
 							Client.this.senden(new Message_Error());
 						}
 
-						lastUsage = Instant.now();
 					}
 				} catch (Exception e) {
-					logger.info("Client " + Client.this.getName() + " disconnected");
+					System.out.println("Client " + Client.this.getName() + " disconnected");
 				} finally {
 					// When the client is no longer reachable, remove authentication and account
 					token = null;
@@ -88,7 +81,7 @@ public class Client implements Sendable {
 		};
 		Thread t = new Thread(r);
 		t.start();
-		logger.info("New client created: " + this.getName());
+		System.out.println("New client created: " + this.getName());
 	}
 	
 	
@@ -137,7 +130,5 @@ public class Client implements Sendable {
 		return token;
 	}
 
-	public Instant getLastUsage() {
-		return lastUsage;
-	}
+	
 }
