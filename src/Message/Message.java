@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import server.Client;
 
@@ -31,7 +32,16 @@ public abstract class Message {
 	public Message(String[] nachrichtenInhalt) {
 		this.nachrichtenInhalt = nachrichtenInhalt;
 	}
-
+	// Special constructor for variable-length messages
+		public Message(String[] nachrichtenInhalt, ArrayList<String> elements) {
+			this.nachrichtenInhalt = new String[nachrichtenInhalt.length + elements.size()];
+			for (int i = 0; i < nachrichtenInhalt.length; i++)
+				this.nachrichtenInhalt[i] = nachrichtenInhalt[i];
+			for (int i = 0; i < elements.size(); i++)
+				this.nachrichtenInhalt[i + nachrichtenInhalt.length] = elements.get(i);
+		}
+		
+	//Process je nach angeforderter message	 
 	public abstract void process(Client client);
 
 	/**
@@ -56,6 +66,7 @@ public abstract class Message {
 	 * @param socket
 	 * @return Message Objekt
 	 */
+	
 	public static Message empfangen(Socket socket) {
 		Message message = null;
 		BufferedReader inputReader;
@@ -73,8 +84,12 @@ public abstract class Message {
 					parts[i] = parts[i].trim();
 				}
 				if (parts[0].equals("Ping")) message = new Message_Ping(parts);
-				
+				else if (parts[0].equals("CreateLogin")) message = new Message_CreateLogin(parts);
+				else if (parts[0].equals("Login")) message = new Message_Login(parts);
+				else if (parts[0].equals("ChangePassword")) message = new Message_ChangePassword(parts);
+				else if (parts[0].equals("Logout")) message = new Message_Logout(parts);
 				System.out.println("Methode empfangen: parts = " + parts);
+				
 //				System.out.println("Methode empfangen: IF ");
 //				String messageClassName = Message.class.getPackage().getName() + "_" + parts[0];
 //				
@@ -127,7 +142,9 @@ public abstract class Message {
 
 		return message;
 	}
-			 
+		
+			
+
 
 	/**
 	 * Jeder Part des String[] mit nachrichtenInhalt wird mit einem "|" getrennt
