@@ -12,9 +12,9 @@ import javax.crypto.spec.PBEKeySpec;
 public class Account {
 
 	// Emailadresse, Username und Password
-	String emailAdress;
-	String userName;
-	String password;
+	private String emailAdress;
+	private String userName;
+	private String password;
 	
 	
 	// Liste für die Accounts

@@ -19,10 +19,8 @@ public class Server {
 			while (true) {
 				// Wait for request, then create input/output streams to talk to the client
 				Socket socket = listener.accept(); // Wartet auf CLient
+				Client.add(new Client(socket));
 				
-				// Startet den Listener
-				ServerThreadForClient serverThreadForClient = new ServerThreadForClient(socket);
-				serverThreadForClient.start(); // Startet ServerThreadForClient
 			}
 		}
 		catch (Exception e) {

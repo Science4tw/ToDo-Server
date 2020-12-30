@@ -9,6 +9,8 @@ import java.net.Socket;
 
 import Message.Message;
 import Message.MessageType;
+import Message.Message_CreateLogin;
+import Message.Message_Login;
 import Message.Message_Ping;
 import Message.Message_Result;
 
@@ -50,13 +52,11 @@ public class ServerThreadForClient extends Thread {
 
 		// Read a message from the client
 		try {
-			while (true) {
 				System.out.println("ServerThreadForClient: Methode run: ");
-				Message msgIn = Message.empfangen(clientSocket);
-				Message msgOut = processMessage(msgIn);
-				System.out.println(msgOut);
-				msgOut.senden(clientSocket);
-			}
+				Client client =  new Client(clientSocket);
+				Message msgIn = Message.empfangen(client);
+				msgIn.verarbeiten(client);
+
 
 		} catch (Exception e) {
 			System.out.println(e.toString());
@@ -81,15 +81,30 @@ public class ServerThreadForClient extends Thread {
 			msgOut = new Message_Result(true);
 			break;
 		case CreateLogin:
+			Message_CreateLogin msgCl = (Message_CreateLogin) msgIn;
+			String username =  msgCl.getUsername();
+			String password = msgCl.getPassword();
+			Account account = new Account(username, password);
+			System.out.println(account.toString());
+			// Createlogin | Username | Password
+
 			msgOut = new Message_Result(true);
 			break;
 		case Login:
+			Message_Login msgLog = (Message_Login) msgIn;
+			String usernameLog =  msgLog.getUsername();
+			String passwordLog = msgLog.getPassword();
+			
 			msgOut = new Message_Result(true);
 			break;
 		case Logout:
 			msgOut = new Message_Result(true);
 			break;
 		case ChangePassword:
+			msgOut = new Message_Result(true);
+			break;
+
+		case CreateToDo:
 			msgOut = new Message_Result(true);
 			break;
 		default:

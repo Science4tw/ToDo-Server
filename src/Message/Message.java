@@ -1,10 +1,8 @@
 package Message;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Constructor;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -65,11 +63,11 @@ public abstract class Message {
 	 * @return Message Objekt
 	 */
 
-	public static Message empfangen(Socket socket) {
+	public static Message empfangen(Client client) {
 		Message message = null;
 		BufferedReader inputReader;
 		try {
-			inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			inputReader = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
 			String messageText = inputReader.readLine();
 
 			try {
@@ -117,4 +115,9 @@ public abstract class Message {
 	public String toString() {
 		return String.join("|", nachrichtenInhalt);
 	}
+
+	/**
+	 * This message type does no processing at all
+	 */
+	public abstract void verarbeiten(Client client);
 }

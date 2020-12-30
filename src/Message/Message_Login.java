@@ -16,19 +16,39 @@ public class Message_Login extends Message {
 	}
 
 	@Override
-	public void process(Client client) {
-		Message reply;
+	public void verarbeiten(Client client) {
+		Message antwort;
 		// Sucht bestehende Logins passend zum Username
 		Account account = Account.exists(username);
 		if (account != null && account.checkPassword(password)) {
 			client.setAccount(account);
 			String token = Account.getToken();
 			client.setToken(token);
-			reply = new Message_Result(this.getClass(), true, token);
+			antwort = new Message_Result(this.getClass(), true, token);
 		} else {
-			reply = new Message_Result(this.getClass(), false);
+			antwort = new Message_Result(this.getClass(), false);
 		}
 		//sendet result
-		client.senden(reply);
+		client.senden(antwort);
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	
+	
+	
 }

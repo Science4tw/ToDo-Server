@@ -59,11 +59,10 @@ public class Client implements Sendable {
 			public void run() {
 				try {
 					while (clientReachable) {
-						Message msg = Message.empfangen(socket);
-
+						Message msg = Message.empfangen(Client.this);
 						// Note syntax "Client.this" - writing "this" would reference Runnable object
 						if (msg != null)
-							msg.process(Client.this);
+							msg.verarbeiten(Client.this);
 						else { 
 							// wenn ungültig oder socket nicht korrekt
 							Client.this.senden(new Message_Error());

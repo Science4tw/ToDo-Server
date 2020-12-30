@@ -1,5 +1,7 @@
 package Message;
 
+import server.Client;
+
 public class Message_Result extends Message {
 
 	// Konstruktor für meiste Messages
@@ -21,6 +23,12 @@ public class Message_Result extends Message {
 		super(new String[] { "Result", msgClass.getSimpleName(), Boolean.toString(result), token
 
 		});
+	}
+
+	@Override
+	public void verarbeiten(Client client) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

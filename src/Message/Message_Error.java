@@ -12,6 +12,6 @@ public class Message_Error extends Message {
 	 * This message type does no processing at all
 	 */
 	@Override
-	public void process(Client client) {
+	public void verarbeiten(Client client) {
 	}
 }

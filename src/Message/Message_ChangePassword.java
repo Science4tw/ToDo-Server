@@ -14,7 +14,7 @@ public class Message_ChangePassword extends Message {
 	}
 
 	@Override
-	public void process(Client client) {
+	public void verarbeiten(Client client) {
 		boolean result = false;
 		if (client.getToken().equals(token)) { //prüft, ob token gültig
 			Account account = client.getAccount();

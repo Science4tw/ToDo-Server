@@ -9,7 +9,7 @@ public class Message_Logout extends Message {
 		super(nachrichtenInhalt);
 	}
 	
-	public void process(Client client) {
+	public void verarbeiten(Client client) {
 		//set token und set account von client = null
 		client.setToken(null); 
 		client.setAccount(null); 
