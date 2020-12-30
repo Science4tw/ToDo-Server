@@ -1,4 +1,5 @@
-package server;
+
+package testOrGarbage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,8 +23,9 @@ public class ServerThreadForClient extends Thread {
 	private Integer clientID; // ID pro Client
 
 	/**
-	 * Konstruktor Wir möchten pro CLient, welcehr sich anmeldet eine Verbindung
-	 * öffnen und während der Dauer der Verbindung soll der ServerSocket
+	 * Konstruktor
+	 * Wir möchten pro CLient, welcehr sich anmeldet eine Verbindung öffnen und während
+	 * der Dauer der Verbindung soll der ServerSocket
 	 * 
 	 * @param clientSocket
 	 */
@@ -50,13 +52,12 @@ public class ServerThreadForClient extends Thread {
 
 		// Read a message from the client
 		try {
-			while (true) {
-				System.out.println("ServerThreadForClient: Methode run: ");
-				Message msgIn = Message.empfangen(clientSocket);
-				Message msgOut = processMessage(msgIn);
-				System.out.println(msgOut);
-				msgOut.senden(clientSocket);
-			}
+			System.out.println("Methode run: ");
+			Message msgIn = Message.empfangen(clientSocket);
+			System.out.println("ServerThreaadForClient: Methode run: msgIn.toString = " + msgIn.toString());
+			Message msgOut = processMessage(msgIn);
+			System.out.println("ServerThreaadForClient: Methode run: msgOut.toString = " + msgOut.toString());
+			msgOut.senden(clientSocket);
 
 		} catch (Exception e) {
 			System.out.println(e.toString());
@@ -68,32 +69,24 @@ public class ServerThreadForClient extends Thread {
 			} catch (IOException e) {
 			}
 		}
-
 	}
 
 	private Message processMessage(Message msgIn) {
+		System.out.println("Methode processMessage: ");
 
 		Message msgOut = null;
-		System.out.println(msgIn);
-
+		
+		System.out.println("Methode processMessage: " + MessageType.getType(msgIn).toString());
 		switch (MessageType.getType(msgIn)) {
+		
 		case Ping:
-			msgOut = new Message_Result(true);
-			break;
-		case CreateLogin:
-			msgOut = new Message_Result(true);
-			break;
-		case Login:
-			msgOut = new Message_Result(true);
-			break;
-		case Logout:
-			msgOut = new Message_Result(true);
-			break;
-		case ChangePassword:
-			msgOut = new Message_Result(true);
+			System.out.println("Methode processMessage: ");
+			msgOut = new Message_Result(isDaemon());
+			System.out.println("Methode processMessage: " + msgOut.toString());
 			break;
 		default:
-			msgOut = new Message_Result(false);
+			System.out.println("Methode processMessage: ");
+			msgOut = null;
 		}
 
 		return msgOut;

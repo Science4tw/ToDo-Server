@@ -32,17 +32,15 @@ public abstract class Message {
 	public Message(String[] nachrichtenInhalt) {
 		this.nachrichtenInhalt = nachrichtenInhalt;
 	}
+
 	// Special constructor for variable-length messages
-		public Message(String[] nachrichtenInhalt, ArrayList<String> elements) {
-			this.nachrichtenInhalt = new String[nachrichtenInhalt.length + elements.size()];
-			for (int i = 0; i < nachrichtenInhalt.length; i++)
-				this.nachrichtenInhalt[i] = nachrichtenInhalt[i];
-			for (int i = 0; i < elements.size(); i++)
-				this.nachrichtenInhalt[i + nachrichtenInhalt.length] = elements.get(i);
-		}
-		
-	//Process je nach angeforderter message	 
-	public abstract void process(Client client);
+	public Message(String[] nachrichtenInhalt, ArrayList<String> elements) {
+		this.nachrichtenInhalt = new String[nachrichtenInhalt.length + elements.size()];
+		for (int i = 0; i < nachrichtenInhalt.length; i++)
+			this.nachrichtenInhalt[i] = nachrichtenInhalt[i];
+		for (int i = 0; i < elements.size(); i++)
+			this.nachrichtenInhalt[i + nachrichtenInhalt.length] = elements.get(i);
+	}
 
 	/**
 	 * Send this message, as text, over the given socket
@@ -56,7 +54,7 @@ public abstract class Message {
 			System.out.println("Methode senden: ");
 			out.write(this.toString() + "\n"); //
 			out.flush();
-			s.shutdownOutput(); // ends output without closing socket
+			// s.shutdownOutput(); // ends output without closing socket
 		} catch (Exception e) {
 		}
 	}
@@ -66,15 +64,14 @@ public abstract class Message {
 	 * @param socket
 	 * @return Message Objekt
 	 */
-	
+
 	public static Message empfangen(Socket socket) {
 		Message message = null;
 		BufferedReader inputReader;
-		System.out.println("Methode empfangen: ");
 		try {
 			inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String messageText = inputReader.readLine();
-			System.out.println("Methode empfangen: ");
+
 			try {
 				// Wenn "|" im Nachrichteninhalt vorhanden ist
 //				if (messageText.contains("|") == true) {
@@ -83,48 +80,17 @@ public abstract class Message {
 				for (int i = 0; i < parts.length; i++) {
 					parts[i] = parts[i].trim();
 				}
-				if (parts[0].equals("Ping")) message = new Message_Ping(parts);
-				else if (parts[0].equals("CreateLogin")) message = new Message_CreateLogin(parts);
-				else if (parts[0].equals("Login")) message = new Message_Login(parts);
-				else if (parts[0].equals("ChangePassword")) message = new Message_ChangePassword(parts);
-				else if (parts[0].equals("Logout")) message = new Message_Logout(parts);
-				System.out.println("Methode empfangen: parts = " + parts);
-				
-//				System.out.println("Methode empfangen: IF ");
-//				String messageClassName = Message.class.getPackage().getName() + "_" + parts[0];
-//				
-//				System.out.println(messageClassName.toString() + " - " + messageClassName);
-//				try {
-//					Class<?> messageClass = Class.forName(messageClassName); 
-//					System.out.println(messageClass.toString() + " - " + messageClass);
-//					
-//					Constructor<?> constructor = messageClass.getConstructor(String[].class);
-//					message = (Message) constructor.newInstance(new Object[] { parts });
-//					System.out.println("Methode empfangen: If im try Teil ");
-//				} catch (Exception e) {
-//					System.out.println(e.toString());
-//
-//				}
-				// Wenn "|" NICHT im Nachrichteninhalt vorhanden ist
-//				} 
-//				else {
-//					String[] part = new String[];
-//					for (int i = 0; i < part.length; i++) {
-//						part[i] = part[i].trim();
-//					}
-//					System.out.println("Methode empfangen: else");
-//					String messageClassName = Message.class.getPackage().getName() + "." + part[0];
-//					try {
-//						Class<?> messageClass = Class.forName(messageClassName);
-//						Constructor<?> constructor = messageClass.getConstructor(String[].class);
-//						message = (Message) constructor.newInstance(new Object[] { part });
-//						System.out.println("Methode empfangen: else im try Teil");
-//
-//					} catch (Exception e) {
-//						System.out.println(e.toString());
-//
-//					}
-//				}
+				System.out.println(parts[0]);
+				if (parts[0].equals("Ping"))
+					message = new Message_Ping(parts);
+				else if (parts[0].equals("CreateLogin"))
+					message = new Message_CreateLogin(parts);
+				else if (parts[0].equals("Login"))
+					message = new Message_Login(parts);
+				else if (parts[0].equals("ChangePassword"))
+					message = new Message_ChangePassword(parts);
+				else if (parts[0].equals("Logout"))
+					message = new Message_Logout(parts);
 
 			} catch (Exception e) {
 				System.out.println(e.toString());
@@ -142,9 +108,6 @@ public abstract class Message {
 
 		return message;
 	}
-		
-			
-
 
 	/**
 	 * Jeder Part des String[] mit nachrichtenInhalt wird mit einem "|" getrennt
