@@ -19,7 +19,7 @@ public class CreateAccountView extends GridPane {
 	private Label lblTitle;
 	private Label lblUsername;
 	private Label lblPassword;
-
+	private Label lblInfo;
 	// 1
 	// Textfelder
 	private TextField txtUsername = new TextField();
@@ -50,6 +50,8 @@ public class CreateAccountView extends GridPane {
 
 		lblUsername = new Label("Username");
 		lblPassword = new Label("Password");
+		lblInfo = new Label("Passwort muss mindestens 3-20 Zeichen lang sein, eine Zahl, ein Gross- und ein Kleinbuchstaben enthalten.");
+		
 		
 		// Organize the layout, add in the controls (col, row)
 		pane.add(lblTitle, 0, 0);
@@ -59,6 +61,7 @@ public class CreateAccountView extends GridPane {
 
 		pane.add(lblPassword, 0, 2);
 		pane.add(txtPassword, 1, 2);
+		pane.add(lblInfo, 0, 3);
 
 		pane.setVgap(5);
 		pane.setHgap(10);

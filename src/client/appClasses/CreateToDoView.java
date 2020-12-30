@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 import server.Priority;
 
 // 0
-public class CreateView extends GridPane {
+public class CreateToDoView extends GridPane {
 
 	private App_Model model;
 	private App_Controller controller;
@@ -51,7 +51,7 @@ public class CreateView extends GridPane {
 	protected Button btnCancel = new Button("Cancel");
 
 	// Konstruktor
-	public CreateView(Stage stage, App_Model model, App_Controller controller) {
+	public CreateToDoView(Stage stage, App_Model model, App_Controller controller) {
 		this.stage = stage;
 		this.model = model;
 		this.add(createDataEntryPane(), 0, 0);
