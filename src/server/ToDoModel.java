@@ -23,6 +23,7 @@ public class ToDoModel {
 	}
 
 	/**
+	 * Listet die ID's aller ToDos auf
 	 * 
 	 * @return ArrayList
 	 */
@@ -40,19 +41,30 @@ public class ToDoModel {
 	}
 
 	/**
+	 * Holt mit der ID ein ToDo aus der Liste
 	 * 
 	 * @param id
 	 * @return
 	 */
-	public static ToDo getToDo(int id) {
+	public static ToDo getToDo(int ToDoID) {
 		synchronized (todos) {
-			if (todos.stream().anyMatch(todo -> todo.getId() == id)) {
-				return todos.stream().filter(todo -> todo.getId() == id).findFirst()
-						.get();
+			if (todos.stream().anyMatch(todo -> todo.getId() == ToDoID)) {
+				return todos.stream().filter(todo -> todo.getId() == ToDoID).findFirst().get();
 			}
 		}
 		return null;
 
+	}
+
+	/**
+	 * Löscht ein ToDo in der Liste mit der ID
+	 * 
+	 * @param ToDoID
+	 */
+	public static void deleteToDo(int ToDoID) {
+		synchronized (todos) {
+			todos.removeIf(todo -> todo.getId() == ToDoID);
+		}
 	}
 
 }

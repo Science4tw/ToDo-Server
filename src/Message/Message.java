@@ -98,6 +98,8 @@ public abstract class Message {
 					message = new Message_ListToDos(parts);
 				else if (parts[0].equals("GetToDo"))
 					message = new Message_GetToDo(parts);
+				else if (parts[0].equals("DeleteToDo"))
+					message = new Message_DeleteToDo(parts);
 				System.out.println("Klasse Message: Methode empfangen: message.toString() = " + message.toString());
 
 			} catch (Exception e) {
