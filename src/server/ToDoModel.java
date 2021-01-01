@@ -22,6 +22,10 @@ public class ToDoModel {
 		}
 	}
 
+	/**
+	 * 
+	 * @return ArrayList
+	 */
 	public static ArrayList<String> listOfIds() {
 
 		ArrayList<String> listOfIds = new ArrayList<>();
@@ -32,6 +36,22 @@ public class ToDoModel {
 		}
 
 		return listOfIds;
+
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public static ToDo getToDo(int id) {
+		synchronized (todos) {
+			if (todos.stream().anyMatch(todo -> todo.getId() == id)) {
+				return todos.stream().filter(todo -> todo.getId() == id).findFirst()
+						.get();
+			}
+		}
+		return null;
 
 	}
 
