@@ -7,13 +7,16 @@ public class ToDo {
 	private String description;
 	private Priority priority;
 	private String dueDate;
+	private Account account;
 
-	public ToDo(int id, String title, String description, Priority priority, String dueDate) {
+	public ToDo(String title, Priority priority, String description) {
 		this.id = id;
 		this.title = title;
-		this.description = description;
 		this.priority = priority;
-		this.dueDate = dueDate;
+		this.description = description;
+//		this.priority = priority;
+//		this.dueDate = dueDate;
+//		this.account = account;
 
 	}
 
@@ -55,6 +58,20 @@ public class ToDo {
 
 	public void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	@Override
+	public String toString() {
+		return "ToDo [id=" + id + ", title=" + title + ", description=" + description + ", priority=" + priority
+				+ ", dueDate=" + dueDate + ", account=" + account + "]";
 	}
 
 	

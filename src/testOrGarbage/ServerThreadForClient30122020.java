@@ -1,4 +1,4 @@
-package server;
+package testOrGarbage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import Message.Message_Login;
 import Message.Message_Ping;
 import Message.Message_Result;
 
-public class ServerThreadForClient extends Thread {
+public class ServerThreadForClient30122020 extends Thread {
 
 	/**
 	 * Instanzvariablen
@@ -29,7 +29,7 @@ public class ServerThreadForClient extends Thread {
 	 * 
 	 * @param clientSocket
 	 */
-	public ServerThreadForClient(Socket clientSocket) {
+	public ServerThreadForClient30122020(Socket clientSocket) {
 		super("Client thread " + clientCounter);
 		this.clientID = clientCounter++;
 		this.clientSocket = clientSocket;

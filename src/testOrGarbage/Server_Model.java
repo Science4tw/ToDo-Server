@@ -1,4 +1,4 @@
-package server;
+package testOrGarbage;
 
 import java.net.ServerSocket;
 import java.net.Socket;

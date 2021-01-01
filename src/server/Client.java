@@ -1,11 +1,7 @@
 package server;
 
-import java.io.IOException;
 import java.net.Socket;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.logging.Logger;
-
 import Message.Message;
 import Message.Message_Error;
 
@@ -28,28 +24,28 @@ public class Client implements Sendable {
 	private Account account = null;
 	private String token = null;
 
-	private boolean clientReachable = true;	
-	
-	//neuer client hinzufügen zu clients
+	private boolean clientReachable = true;
+
+	// neuer client hinzufügen zu clients
 	public static void add(Client client) {
 		synchronized (clients) {
 			clients.add(client);
 		}
 	}
-	
-	//sucht Client nach username und gibt diesen zurück
+
+	// sucht Client nach username und gibt diesen zurück
 	public static Client exists(String username) {
 		synchronized (clients) {
 			for (Client c : clients) {
-				if (c.getAccount() != null && c.getName().equals(username)) 
+				if (c.getAccount() != null && c.getName().equals(username))
 					return c;
 			}
 		}
 		return null;
 	}
-	
-	//neues client objekt, kommuniziert über socket. 
-	//Startet sofort mit messages von client zu empfangen
+
+	// neues client objekt, kommuniziert über socket.
+	// Startet sofort mit messages von client zu empfangen
 	public Client(Socket socket) {
 		this.clientSocket = socket;
 
@@ -63,8 +59,9 @@ public class Client implements Sendable {
 						// Note syntax "Client.this" - writing "this" would reference Runnable object
 						if (msg != null)
 							msg.verarbeiten(Client.this);
-						else { 
+						else {
 							// wenn ungültig oder socket nicht korrekt
+							// Rufe den Client auf und senden ihm Message Error Objekt
 							Client.this.senden(new Message_Error());
 						}
 
@@ -82,17 +79,17 @@ public class Client implements Sendable {
 		t.start();
 		System.out.println("New client created: " + this.getName());
 	}
-	
-	
-	@Override //aus Sendable
+
+	@Override // aus Sendable
 	public String getName() {
 		String name = null;
-		if (account != null) name = account.getUserName();
+		if (account != null)
+			name = account.getUserName();
 		return name;
 	}
 
-	@Override //aus Sendable
-	//sendet message an client
+	@Override // aus Sendable
+	// sendet message an client
 	public void senden(Message message) {
 		try {
 			message.senden(clientSocket);
@@ -129,5 +126,4 @@ public class Client implements Sendable {
 		return token;
 	}
 
-	
 }

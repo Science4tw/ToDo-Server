@@ -48,9 +48,10 @@ public abstract class Message {
 	public void senden(Socket s) {
 
 		try {
+			System.out.println("Klasse Message: Methode senden: this.toString() = " + this.toString());
 			OutputStreamWriter out = new OutputStreamWriter(s.getOutputStream());
-			System.out.println("Methode senden: ");
 			out.write(this.toString() + "\n"); //
+			System.out.println("Klasse Message: Methode senden: this.toString() = " + this.toString());
 			out.flush();
 			// s.shutdownOutput(); // ends output without closing socket
 		} catch (Exception e) {
@@ -69,6 +70,8 @@ public abstract class Message {
 		try {
 			inputReader = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
 			String messageText = inputReader.readLine();
+			
+			System.out.println("Klasse Message: Methode empfangen: messageText.toString() = " + messageText.toString());
 
 			try {
 				// Wenn "|" im Nachrichteninhalt vorhanden ist
@@ -89,6 +92,9 @@ public abstract class Message {
 					message = new Message_ChangePassword(parts);
 				else if (parts[0].equals("Logout"))
 					message = new Message_Logout(parts);
+				else if (parts[0].equals("CreateToDo"))
+					message = new Message_CreateToDo(parts);
+				System.out.println("Klasse Message: Methode empfangen: message.toString() = " + message.toString());
 
 			} catch (Exception e) {
 				System.out.println(e.toString());

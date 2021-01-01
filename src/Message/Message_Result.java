@@ -1,5 +1,7 @@
 package Message;
 
+import java.util.ArrayList;
+
 import server.Client;
 
 public class Message_Result extends Message {
@@ -25,10 +27,17 @@ public class Message_Result extends Message {
 		});
 	}
 
+	/**
+	 * When a list is requested, the result includes all list values
+	 */
+	public Message_Result(Class<?> msgClass, boolean result, ArrayList<String> list) {
+		super(new String[] { "Result", msgClass.getSimpleName(), Boolean.toString(result) }, list);
+	};
+
 	@Override
 	public void verarbeiten(Client client) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
