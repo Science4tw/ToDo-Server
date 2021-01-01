@@ -1,6 +1,7 @@
 package Message;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import server.Client;
 import server.Priority;
@@ -41,7 +42,7 @@ public class Message_CreateToDo extends Message {
 
 	@Override
 	public void verarbeiten(Client client) {
-		System.out.println("Message_CreateToDo: Methode verarbeiten");
+		System.out.println("Message_CreateToDo: Methode verarbeiten startet");
 		// TODO Auto-generated method stub
 		boolean result = false;
 
@@ -49,9 +50,10 @@ public class Message_CreateToDo extends Message {
 			
 			ToDo todo = new ToDo(title, priority, description);
 			ToDoModel.createToDo(todo);
+
 			System.out.println(todo);
 			result = true;
-			client.senden(new Message_Result(this.getClass(), result));
+			client.senden(new Message_Result(this.getClass(), result, String.valueOf(todo.getId())));
 			System.out.println("Message_CreateToDo: Methode verarbeiten: todo.toString() = " + todo.toString());
 		} else {
 			result = false;
