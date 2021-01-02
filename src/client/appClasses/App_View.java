@@ -63,7 +63,7 @@ public class App_View extends View<App_Model> {
 	private Button btnLogout;
 
 	// 1 (Data Display) die TableView für die ToDos
-	protected TableView<ToDo> tableView;
+	protected TableView<ToDo> tableViewToDo;
 	protected TableColumn<ToDo, Integer> colID;
 	protected TableColumn<ToDo, String> colToDo;
 	protected TableColumn<ToDo, String> colDescription;
@@ -102,37 +102,7 @@ public class App_View extends View<App_Model> {
 		this.mainScene = mainScene;
 	}
 
-	public Scene getCreateToDoScene() {
-		return this.createToDoScene;
-	}
-
-	public void setCreateToDoScene(Scene createToDoScene) {
-		this.createToDoScene = createToDoScene;
-	}
-
-	public Scene getCreateAccountScene() {
-		return this.createAccountScene;
-	}
-
-	public void setCreateAccountScene(Scene createAccountScene) {
-		this.createAccountScene = createAccountScene;
-	}
-
-	public Scene getChangePasswordScene() {
-		return this.changePasswordScene;
-	}
-
-	public void setChangePasswordScene(Scene changePasswordScene) {
-		this.changePasswordScene = changePasswordScene;
-	}
-
-	public Scene getSplashScene() {
-		return splashScene;
-	}
-
-	public void setSplashScene(Scene splashScene) {
-		this.splashScene = splashScene;
-	}
+	
 
 	public void start() {
 		stage.show();
@@ -144,7 +114,7 @@ public class App_View extends View<App_Model> {
 	}
 
 	// Methode um die Kontrollelemente zu erzeugen (Login)
-	public Pane controlPaneLogin() {
+	public Pane createControlPaneLogin() {
 
 		GridPane topBox = new GridPane();
 		topBox.setId("TopBox");
@@ -177,7 +147,7 @@ public class App_View extends View<App_Model> {
 	}
 
 	// Methode um die Kontrollelemente zu erzeugen (To Do verwalten)
-	public Pane controlPaneToDo() {
+	public Pane createControlPaneToDo() {
 		GridPane bottomBox = new GridPane();
 		bottomBox.setId("BottomBox");
 
@@ -196,10 +166,10 @@ public class App_View extends View<App_Model> {
 	/*
 	 * Data Display Pane TableView für die "todo" Liste
 	 */
-	private TableView<ToDo> createTableView() {
-		this.tableView = new TableView<ToDo>();
-		this.tableView.setEditable(false);
-		this.tableView.setPlaceholder(new Label("-"));
+	private TableView<ToDo> createTableViewToDo() {
+		this.tableViewToDo = new TableView<ToDo>();
+		this.tableViewToDo.setEditable(false);
+		this.tableViewToDo.setPlaceholder(new Label("-"));
 
 		// Each column needs a title, and a source of data.
 		// For editable columns, each column needs to contain a TextField.
@@ -208,43 +178,57 @@ public class App_View extends View<App_Model> {
 		colID = new TableColumn<>("ID"); // Erstellen und Beschriftung der Spalte
 		colID.setMinWidth(200);
 		colID.setCellValueFactory(new PropertyValueFactory<>("id")); // Insatnzieren ein Property und übergeben
-		tableView.getColumns().add(colID); // Fügen der TableView die Spalte hinzu
+		tableViewToDo.getColumns().add(colID); // Fügen der TableView die Spalte hinzu
 
 		// Title Spalte
 		colToDo = new TableColumn<>("To Do");
 		colToDo.setMinWidth(200);
 		colToDo.setCellValueFactory(new PropertyValueFactory<>("To Do"));
-		tableView.getColumns().add(colToDo);
+		tableViewToDo.getColumns().add(colToDo);
 
 		// Description Spalte
 		colDescription = new TableColumn<>("Description");
 		colDescription.setMinWidth(200);
 		colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
-		tableView.getColumns().add(colDescription);
+		tableViewToDo.getColumns().add(colDescription);
 
 		// Priority Spalte
 		colPriority = new TableColumn<>("Priority");
 		colPriority.setMinWidth(200);
 		colPriority.setCellValueFactory(new PropertyValueFactory<ToDo, String>("priority"));
-		tableView.getColumns().add(colPriority);
+		tableViewToDo.getColumns().add(colPriority);
 
 		// DueDate Spalte
 		colDueDate = new TableColumn<>("DueDate");
 		colDueDate.setMinWidth(200);
 		colDueDate.setCellValueFactory(new PropertyValueFactory<ToDo, String>("dueDate"));
-		tableView.getColumns().add(colDueDate);
+		tableViewToDo.getColumns().add(colDueDate);
 
 		// Finally, attach the tableView to the ObservableList of data
-		tableView.setItems(model.getToDos());
+		tableViewToDo.setItems(model.getToDos());
 
-		return tableView;
+		return tableViewToDo;
 	}
 
-	// Methode die Create View zu erzeugen
+	// Methode die Create, ChangePasswort, Account View zu erzeugen
 	public Pane createToDoView() {
 		Pane pane = new Pane();
 		this.setCreateToDoView(new CreateToDoView(stage, model, controller));
 		pane.getChildren().add(this.getCreateToDoView());
+		return pane;
+
+	}
+	public Pane changePasswordView() {
+		Pane pane = new Pane();
+		this.setChangePasswordView(new ChangePasswordView(stage, model, controller));
+		pane.getChildren().add(this.getChangePasswordView());
+		return pane;
+
+	}
+	public Pane createAccountView() {
+		Pane pane = new Pane();
+		this.setCreateAccountView(new CreateAccountView(stage, model, controller));
+		pane.getChildren().add(this.getCreateAccountView());
 		return pane;
 
 	}
@@ -255,12 +239,12 @@ public class App_View extends View<App_Model> {
 	}
 
 	// Getter & Setter Tabelview
-	public TableView<ToDo> getTableView() {
-		return this.tableView;
+	public TableView<ToDo> getTableViewToDo() {
+		return this.tableViewToDo;
 	}
 
-	public void setTableView(TableView<ToDo> tableView) {
-		this.tableView = tableView;
+	public void setTableViewToDo(TableView<ToDo> tableViewToDo) {
+		this.tableViewToDo = tableViewToDo;
 	}
 
 	// Getter & Setter ID
@@ -307,6 +291,7 @@ public class App_View extends View<App_Model> {
 	public void setColDueDate(TableColumn<ToDo, String> colDueDate) {
 		this.colDueDate = colDueDate;
 	}
+
 
 	// Getter & Setter für Menu
 	public MenuItem getMenuHelpShortcuts() {
@@ -449,7 +434,41 @@ public class App_View extends View<App_Model> {
 	public void setChangePasswordView(ChangePasswordView changePasswordView) {
 		this.changePasswordView = changePasswordView;
 	}
+	
+	// ***** SZENEN ***** (GETTER & SETTER)
+	public Scene getCreateToDoScene() {
+		return createToDoScene;
+	}
 
+	public void setCreateToDoScene(Scene createToDoScene) {
+		this.createToDoScene = createToDoScene;
+	}
+	public Scene getCreateAccountScene() {
+		return createAccountScene;
+	}
+
+	public void setCreateAccountScene(Scene createAccountScene) {
+		this.createAccountScene = createAccountScene;
+	}
+	public Scene getChangePasswordScene() {
+		return changePasswordScene;
+	}
+
+	public void setChangePasswordScene(Scene changePasswordScene) {
+		this.changePasswordScene = changePasswordScene;
+	}
+
+	public Scene getSplashScene() {
+		return splashScene;
+	}
+
+	public void setSplashScene(Scene splashScene) {
+		this.splashScene = splashScene;
+	}
+
+	// ***** ENDE SZENEN *****
+	
+	
 	protected Scene create_GUI() {
 		ServiceLocator sl = ServiceLocator.getServiceLocator();
 		Logger logger = sl.getLogger();
@@ -483,18 +502,18 @@ public class App_View extends View<App_Model> {
 		GridPane root = new GridPane();
 		root.add(menuBar, 0, 0);
 
-		root.add(controlPaneLogin(), 0, 1);
+		root.add(createControlPaneLogin(), 0, 1);
 
-		this.tableView = createTableView();
-		root.add(tableView, 0, 2);
-		this.tableView.prefWidthProperty().bind(root.widthProperty());
+		this.tableViewToDo = createTableViewToDo();
+		root.add(tableViewToDo, 0, 2);
+		this.tableViewToDo.prefWidthProperty().bind(root.widthProperty());
 
-		root.add(controlPaneToDo(), 0, 3);
+		root.add(createControlPaneToDo(), 0, 3);
 
 		// SZENEN
-		createToDoScene = new Scene(getCreateToDoView(), 450, 450);
-		createAccountScene = new Scene(getCreateAccountView(), 450, 450);
-		changePasswordScene = new Scene(getChangePasswordView(), 450, 450);
+		createToDoScene = new Scene(createToDoView(), 450, 450);
+		createAccountScene = new Scene(createAccountView(), 450, 450);
+		changePasswordScene = new Scene(changePasswordView(), 450, 450);
 
 		this.lblStatus = new Label("Everything okay");
 		this.lblStatus.getStyleClass().add("statusLabel");

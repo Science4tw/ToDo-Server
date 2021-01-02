@@ -50,8 +50,8 @@ public class CreateAccountView extends GridPane {
 
 		lblUsername = new Label("Username");
 		lblPassword = new Label("Password");
-		lblInfo = new Label("Passwort muss mindestens 3-20 Zeichen lang sein, eine Zahl, ein Gross- und ein Kleinbuchstaben enthalten.");
-		
+		lblInfo = new Label("Passwort muss mindestens 3-20 Zeichen lang sein, \neine Zahl, ein Gross- und ein Kleinbuchstaben enthalten.");
+		lblInfo.setStyle("-fx-font-weight: bold; -fx-font-size: 10;");
 		
 		// Organize the layout, add in the controls (col, row)
 		pane.add(lblTitle, 0, 0);

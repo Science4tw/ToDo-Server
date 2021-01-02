@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import server.Account;
 
 public class ChangePasswordView extends GridPane {
 
@@ -17,12 +18,11 @@ public class ChangePasswordView extends GridPane {
 	// 1 Controls 
 	private Label lblTitle;
 	private Label lblUsername;
+	private Label lblCurrentUsername;
 	private Label lblPassword;
-	private Label lblbInfo;
-
+	private Label lblInfo;
 	// 1
 	// Textfelder
-	private TextField txtUsername = new TextField();
 	private TextField txtPassword = new TextField();
 
 	// 1 Buttons 
@@ -39,6 +39,8 @@ public class ChangePasswordView extends GridPane {
 		getStylesheets().add(getClass().getResource("app.css").toExternalForm());
 	}
 
+	
+
 	// 1 Data Entry Pane
 	private Pane createDataEntryPane() {
 
@@ -50,17 +52,22 @@ public class ChangePasswordView extends GridPane {
 
 		lblUsername = new Label("Username");
 		lblPassword = new Label("Neues Passwort");
-		lblbInfo = new Label("Passwort muss mindestens 3-20 Zeichen lang sein, eine Zahl, ein Gross- und ein Kleinbuchstaben enthalten.");
+		lblInfo = new Label("Passwort muss mindestens 3-20 Zeichen lang sein, \neine Zahl, ein Gross- und ein Kleinbuchstaben enthalten.");
+		lblInfo.setStyle("-fx-font-weight: bold; -fx-font-size: 10;");
+		
+		lblCurrentUsername = new Label("Methode für aktuellen username noch ergänzen");
+				
+		
 		
 		// Organize the layout, add in the controls (col, row)
 		pane.add(lblTitle, 0, 0);
 
 		pane.add(lblUsername, 0, 1);
-		pane.add(txtUsername, 1, 1);
+		pane.add(lblCurrentUsername, 1, 1);
 
 		pane.add(lblPassword, 0, 2);
 		pane.add(txtPassword, 1, 2);
-		pane.add(lblbInfo, 0, 3);
+		pane.add(lblInfo, 0, 3);
 
 		pane.setVgap(5);
 		pane.setHgap(10);
@@ -84,7 +91,6 @@ public class ChangePasswordView extends GridPane {
 	 * Methode um die TextFelder und Combobox zu leeren
 	 */
 	public void reset() {
-		this.txtUsername.setText("");
 		this.txtPassword.setText("");
 	}
 
@@ -112,19 +118,11 @@ public class ChangePasswordView extends GridPane {
 		this.model = model;
 	}
 
-	// Getter & Setter Fields
-	public TextField getTxtUsername() {
-		return txtUsername;
-	}
-
+	// Getter & Setter TextField
+		
 	public TextField getTxtPassword() {
 		return txtPassword;
 	}
-
-	public void setTxtUsername(TextField txtUsername) {
-		this.txtUsername = txtUsername;
-	}
-
 	public void setTxtPassword(TextField txtPassword) {
 		this.txtPassword = txtPassword;
 	}
@@ -160,6 +158,16 @@ public class ChangePasswordView extends GridPane {
 		return lblPassword;
 	}
 
+	
+	public Label getLblCurrentUsername() {
+		return lblCurrentUsername;
+	}
+
+	
+
+	public void setLblCurrentUsername(Label lblCurrentUsername) {
+		this.lblCurrentUsername = lblCurrentUsername;
+	}
 	
 
 }
