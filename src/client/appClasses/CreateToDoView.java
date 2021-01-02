@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -34,14 +35,12 @@ public class CreateToDoView extends GridPane {
 	private Label lblTitle;
 	private Label lblToDo;
 	private Label lblDescription;
-	private Label lblDueDate;
 	private Label lblPriority;
 
 	// 1
 	// Textfeld für To Do, Description, Due Date
 	private TextField txtToDo = new TextField();
 	private TextField txtDescription = new TextField();
-	private TextField txtDueDate = new TextField();
 
 	// ComboBox für Priority
 	protected ComboBox<Priority> cmbPriority = new ComboBox<Priority>();
@@ -71,7 +70,6 @@ public class CreateToDoView extends GridPane {
 
 		lblToDo = new Label("To Do");
 		lblDescription = new Label("Description");
-		lblDueDate = new Label("Stichtag");
 		lblPriority = new Label("Priorität");
 		// Fill combos (hol mir die Items,alle hinzufügen von den values der Enums)
 		cmbPriority.getItems().addAll(Priority.values());
@@ -85,11 +83,9 @@ public class CreateToDoView extends GridPane {
 		pane.add(lblDescription, 0, 2);
 		pane.add(txtDescription, 1, 2);
 
-		pane.add(lblDueDate, 0, 3);
-		pane.add(txtDueDate, 1, 3);
-
-		pane.add(lblPriority, 0, 4);
-		pane.add(cmbPriority, 1, 4);
+	
+		pane.add(lblPriority, 0, 3);
+		pane.add(cmbPriority, 1, 3);
 
 		pane.setVgap(5);
 		pane.setHgap(10);
@@ -115,7 +111,6 @@ public class CreateToDoView extends GridPane {
 	public void reset() {
 		this.txtToDo.setText("");
 		this.txtDescription.setText("");
-		this.txtDueDate.setText("");
 		this.cmbPriority.getSelectionModel().clearSelection();
 	}
 
@@ -148,11 +143,8 @@ public class CreateToDoView extends GridPane {
 		return txtToDo;
 	}
 
-	public TextField getTxtDueDate() {
-		return txtDueDate;
-	}
 	
-	public TextField getDescription() {
+	public TextField getTxtDescription() {
 		return txtDescription;
 	}
 	public ComboBox<Priority> getCmbPriority() {
@@ -163,9 +155,6 @@ public class CreateToDoView extends GridPane {
 		this.txtToDo = txtToDo;
 	}
 
-	public void setTxtDueDate(TextField txtDueDate) {
-		this.txtDueDate = txtDueDate;
-	}
 
 	public void setTxtDescription(TextField txtDescription) {
 		this.txtDescription = txtDescription;
@@ -204,12 +193,11 @@ public class CreateToDoView extends GridPane {
 		return lblToDo;
 	}
 
-	public Label getLblDueDate() {
-		return lblDueDate;
-	}
-
+	
 	public Label getLblPriority() {
 		return lblPriority;
 	}
+
+	
 
 }

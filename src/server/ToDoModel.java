@@ -66,5 +66,6 @@ public class ToDoModel {
 			todos.removeIf(todo -> todo.getId() == ToDoID);
 		}
 	}
+	
 
 }

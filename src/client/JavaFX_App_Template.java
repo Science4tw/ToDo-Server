@@ -117,7 +117,7 @@ public class JavaFX_App_Template extends Application {
      */
     @Override
     public void stop() {
-        serviceLocator.getConfiguration().save();
+       serviceLocator.getConfiguration().save();
         if (view != null) {
             // Make the view invisible
             view.stop();

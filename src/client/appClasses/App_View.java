@@ -58,7 +58,7 @@ public class App_View extends View<App_Model> {
 	private Label lblPassword;
 	private TextField txtPassword;
 	private Button btnLogin;
-	private Button btnCreate;
+	private Button btnCreateToDo;
 	private Button btnDelete;
 	private Button btnLogout;
 
@@ -151,11 +151,11 @@ public class App_View extends View<App_Model> {
 		GridPane bottomBox = new GridPane();
 		bottomBox.setId("BottomBox");
 
-		btnCreate = new Button("Create To Do");
+		btnCreateToDo = new Button("Create To Do");
 		btnDelete = new Button("Delete To Do");
 		btnLogout = new Button("Logout");
 
-		bottomBox.add(btnCreate, 0, 0);
+		bottomBox.add(btnCreateToDo, 0, 0);
 		bottomBox.add(btnDelete, 2, 0);
 		bottomBox.add(btnLogout, 4, 0);
 		bottomBox.setHgap(5);
@@ -319,12 +319,12 @@ public class App_View extends View<App_Model> {
 	}
 
 	// Getter & Setter für Buttons
-	public Button getBtnCreate() {
-		return btnCreate;
+	public Button getBtnCreateToDo() {
+		return btnCreateToDo;
 	}
 
-	public void setBtnCreate(Button btnCreate) {
-		this.btnCreate = btnCreate;
+	public void setBtnCreateToDo(Button btnCreateToDo) {
+		this.btnCreateToDo = btnCreateToDo;
 	}
 
 	public Button getBtnDelete() {
@@ -544,7 +544,7 @@ public class App_View extends View<App_Model> {
 		lblPassword.setText(t.getString("lbl.password"));
 
 		btnLogin.setText(t.getString("button.login"));
-		btnCreate.setText(t.getString("button.create"));
+		btnCreateToDo.setText(t.getString("button.create"));
 		btnDelete.setText(t.getString("button.delete"));
 		btnLogout.setText(t.getString("button.logout"));
 
@@ -553,7 +553,6 @@ public class App_View extends View<App_Model> {
 		// Labels CreateToDoView
 		getCreateToDoView().getLblTitle().setText(t.getString("createToDoView.label.title"));
 		getCreateToDoView().getLblToDo().setText(t.getString("createToDoView.label.toDo"));
-		getCreateToDoView().getLblDueDate().setText(t.getString("createToDoView.label.dueDate"));
 		getCreateToDoView().getLblPriority().setText(t.getString("createToDoView.label.priority"));
 
 		// Buttons CreateToDoView

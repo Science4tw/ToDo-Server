@@ -79,6 +79,9 @@ public class Client implements Sendable {
 		t.start();
 		System.out.println("New client created: " + this.getName());
 	}
+	
+	
+	
 
 	@Override // aus Sendable
 	public String getName() {
@@ -125,5 +128,7 @@ public class Client implements Sendable {
 	public String getToken() {
 		return token;
 	}
+
+	
 
 }

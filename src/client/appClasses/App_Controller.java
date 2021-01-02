@@ -2,9 +2,12 @@ package client.appClasses;
 
 import java.util.Optional;
 import client.ServiceLocator;
+import client.TestClient;
 import client.abstractClasses.Controller;
 import client.commonClasses.Translator;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -16,13 +19,16 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import server.Account;
+import server.Client;
 import server.Priority;
+import server.Server;
 import server.ToDo;
 
 public class App_Controller extends Controller<App_Model, App_View> {
 
 	ServiceLocator serviceLocator;
-	
+
 	// Speichert Wert für gültige Textfelder
 	private boolean usernameValid = false;
 	private boolean passwordValid = false;
@@ -30,25 +36,25 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	// Konstruktor
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
+		
+		model.getToDos();
 
 		// *** SZENEN WECHSEL ***
-		// Wenn in der App_View der Create Button gedrückt wird,
-		// soll die Sczene gewechselt werden zu der CreateView
-		view.getBtnCreate().setOnAction(event -> {
+		// Szenenwechsel bei Create ToDo Button in appview
+		view.getBtnCreateToDo().setOnAction(event -> {
 			view.getStage().setScene(view.getCreateToDoScene());
 		});
-		// Szenenwechsel bei Menu create account
+		// Szenenwechsel bei klick auf Menu create account
 		view.getMenuAccountCreate().setOnAction(event -> {
 			view.getStage().setScene(view.getCreateAccountScene());
 		});
 
-		// Szenenwechsel bei Menu change password
+		// Szenenwechsel bei klick auf Menu change password
 		view.getMenuAccountPassword().setOnAction(event -> {
 			view.getStage().setScene(view.getChangePasswordScene());
 		});
 
-		// Wenn in der CreateView der Cancel Button gedrückt wird,
-		// soll die Sczene gewechselt werden
+		// Szenenwechsel bei cancel button in Create Todo View
 		view.getCreateToDoView().getBtnCancel().setOnAction(event -> {
 			view.getCreateToDoView().reset();
 			view.getStage().setScene(getMainScene());
@@ -65,8 +71,7 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			view.getStage().setScene(getMainScene());
 		});
 
-		// Wenn in der CreateView der Save Button gedrückt wird,
-		// soll die Sczene gewechselt werden
+		// Szenenwechsel  beiSave Button in Create todo View
 		view.getCreateToDoView().getBtnSave().setOnAction(event -> {
 			view.getCreateToDoView().reset();
 			view.getStage().setScene(getMainScene());
@@ -88,23 +93,17 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		// Wenn in View Button Connect geklickt wird
 		view.getBtnConnect().setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				
-				// *****
+				String port = view.getTxtPort().getText();
+				String ipAdress = view.getTxtIP().getText();
+				// Server.startServerSocket(port, ipAdress);
+
 				Translator t = ServiceLocator.getServiceLocator().getTranslator();
 				view.setStatus(t.getString("statusLabel.initialized"));
 			}
 		});
-		// ********NOCH NICHT FERTIG
-		// Wenn in View Button Login geklickt wird
-		view.getBtnLogin().setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent event) {
-				// *****
-					Translator t = ServiceLocator.getServiceLocator().getTranslator();
-				view.setStatus(t.getString("statusLabel.loggedIn"));
-			}
-		});
-
-		// Wenn in View Button Delete geklickt wird
+		
+		
+		// Wenn in app_View Button Delete geklickt wird
 		view.getBtnDelete().setOnAction(event -> {
 			ToDo selectedItem = view.getTableViewToDo().getSelectionModel().getSelectedItem();
 			Alert alertDelete = new Alert(AlertType.CONFIRMATION);
@@ -127,6 +126,8 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 		});
 
+		
+				
 		// Alert für MenuItem Shortcut
 		view.getMenuHelpShortcuts().setOnAction(e -> {
 			Alert shortcutinfo = new Alert(AlertType.INFORMATION);
@@ -141,11 +142,11 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 		// IN DEN DREI VIEWS DIE SAVE BUTTONS
 		// CreateToDoView: Save Button unter Aktion setzen
-		view.getCreateToDoView().getBtnSave().setOnAction(this::saveToDo);
+		view.getCreateToDoView().getBtnSave().setOnAction(this::createToDo);
 		// CreateAccountView: Save Button unter Aktion setzen
-		view.getCreateAccountView().getBtnSave().setOnAction(this::saveAccount);
+		view.getCreateAccountView().getBtnSave().setOnAction(this::createLogin);
 		// ChangePasswordView: Save Button unter Aktion setzen
-		view.getChangePasswordView().getBtnSave().setOnAction(this::savePassword);
+		view.getChangePasswordView().getBtnSave().setOnAction(this::changePassword);
 
 		/**
 		 * 3 ChangeListener für Textfelder Username und Password
@@ -164,7 +165,6 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.getCreateAccountView().getTxtPassword().textProperty().addListener((obserable, oldValue, newValue) -> {
 			validatePassword(newValue);
 		});
-		
 
 		view.getChangePasswordView().getTxtPassword().textProperty().addListener((obserable, oldValue, newValue) -> {
 			validatePassword(newValue);
@@ -188,7 +188,9 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.getCreateAccountView().getBtnSave().setDisable(true);
 		view.getChangePasswordView().getBtnSave().setDisable(true);
 
-		// register ourselves to handle window-closing event
+		/**
+		 *  register ourselves to handle window-closing event
+		 */
 		view.getStage().setOnCloseRequest(evt -> {
 			Alert closingAlert = new Alert(AlertType.CONFIRMATION);
 			Translator t = ServiceLocator.getServiceLocator().getTranslator();
@@ -203,14 +205,14 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			closingAlert.showAndWait().filter(r -> r != ButtonType.OK).ifPresent(r -> evt.consume());
 		});
 
-		/*
+		/**
 		 * Shortcuts
 		 */
 		// set shortcut ctrl'c to create to do
-		view.getBtnCreate().getScene().getAccelerators()
+		view.getBtnCreateToDo().getScene().getAccelerators()
 				.put(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN), new Runnable() {
 					public void run() {
-						view.getBtnCreate().fire();
+						view.getBtnCreateToDo().fire();
 					}
 				});
 
@@ -301,7 +303,6 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			view.getCreateAccountView().getTxtUsername().getStyleClass().remove("usernameNotOk");
 			view.getCreateAccountView().getTxtUsername().getStyleClass().remove("usernameok");
 
-
 			// Farben setzen, rot = invalid, grün = valid
 			if (valid) {
 				view.getTxtUsername().getStyleClass().add("usernameok");
@@ -316,8 +317,8 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			usernameValid = valid;
 			// Aktiviert Button, wenn alles korrekt
 			enableLoginButton();
-			enableSaveAccountButton();
-			enableSavePasswordButton();
+			enableCreateAccountButton();
+			enableChangePasswordButton();
 		}
 	}
 
@@ -370,8 +371,8 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 		// Aktiviert Button, wenn alles korrekt
 		enableLoginButton();
-		enableSaveAccountButton();
-		enableSavePasswordButton();
+		enableCreateAccountButton();
+		enableChangePasswordButton();
 
 	}
 
@@ -380,26 +381,37 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.getBtnLogin().setDisable(!valid);
 		// *********NOCH àNDERN: SetDisable bei erfolgreichem Login und Login button
 		// disablen
-		view.getBtnCreate().setDisable(!valid);
+		view.getBtnCreateToDo().setDisable(!valid);
 		view.getBtnLogout().setDisable(!valid);
 
 	}
 
-	private void enableSaveAccountButton() {
+	private void enableCreateAccountButton() {
 		boolean valid = passwordValid & usernameValid;
 		view.getCreateAccountView().getBtnSave().setDisable(!valid);
 
 	}
 
-	private void enableSavePasswordButton() {
+	private void enableChangePasswordButton() {
 		boolean valid = passwordValid & usernameValid;
 		view.getChangePasswordView().getBtnSave().setDisable(!valid);
 	}
 
-	private void saveAccount(ActionEvent event) {
-		if (usernameValid && passwordValid) {
+	
+	//Action Events für CreateLogin, changePassword, create Todo
+	private void createLogin(ActionEvent event) {
+		
 			// *************NOCH AUSFOMRULIEREN NICHT FERTIG
 
+			String username = view.getCreateAccountView().getTxtUsername().getText();
+			String password = view.getCreateAccountView().getTxtPassword().getText();
+			if (usernameValid && passwordValid) {
+				
+			if (Client.exists(username) == null) {
+				Account account = new Account(username, password);
+				Account.add(account);
+			}
+			
 			Translator t = ServiceLocator.getServiceLocator().getTranslator();
 			view.setStatus(t.getString("statusLabel.accountCreated"));
 
@@ -407,26 +419,33 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 	}
 
-	private void savePassword(ActionEvent event) {
-		if (passwordValid) {
-			//*************NOCH AUSFOMRULIEREN NICHT FERTIG
+	private void changePassword(ActionEvent event) {
 		
-		Translator t = ServiceLocator.getServiceLocator().getTranslator();
-		view.setStatus(t.getString("statusLabel.passwordChanged"));
+			// *************NOCH AUSFOMRULIEREN NICHT FERTIG
+			String username = view.getChangePasswordView().getLblUsername().getText();
+			String password = view.getChangePasswordView().getTxtPassword().getText();
+			if (passwordValid) {
+			
+		//	if (Account.exists(username) != null && Account.checkPassword(password)) {
+				// Account.changePassword(password);
+
+		//	}
+			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+			view.setStatus(t.getString("statusLabel.passwordChanged"));
 		}
 	}
 
-	private void saveToDo(ActionEvent event) {
-		int ID = 1; // ************MUSS NOCH ANGEPASST WERDEN
-		String todo = view.getCreateToDoView().getTxtToDo().getText();
+	private void createToDo(ActionEvent event) {
+		// ************MUSS NOCH ANGEPASST WERDEN
+		String title = view.getCreateToDoView().getTxtToDo().getText();
 		Priority priority = view.getCreateToDoView().getCmbPriority().getValue();
-		String duedate = view.getCreateToDoView().getTxtDueDate().getText();
+		String description = view.getCreateToDoView().getTxtDescription().getText();
 
 		// 4. Überprüfen das Kontrollelemente nicht leer sind
-		if (todo != null && priority != null && duedate != null) {
+		if (title != null && priority != null && description != null) {
 
 			// 5
-			model.createToDo(todo, priority, duedate);
+			model.createToDo(title, priority, description);
 			Translator t = ServiceLocator.getServiceLocator().getTranslator();
 			view.setStatus(t.getString("statusLabel.createToDo"));
 			view.getCreateToDoView().reset();
@@ -438,7 +457,6 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 	// ****** GETTER FUER DIE SZENNEN ******
 	// Methode um die CreateToDo Szene aus der App_View zu holen
-	
 
 	// Methode um die Country Szene aus der App_View zu holen
 	private Scene getMainScene() {
