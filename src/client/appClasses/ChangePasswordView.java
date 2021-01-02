@@ -8,6 +8,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import server.Account;
+import testOrGarbage.App_Model;
 
 public class ChangePasswordView extends GridPane {
 

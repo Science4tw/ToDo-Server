@@ -2,7 +2,7 @@ package Message;
 
 import server.Client;
 import server.ToDo;
-import server.ToDoModel;
+import server.Server_ToDoModel;
 
 /**
  * Senden: Command|Token|ID
@@ -30,7 +30,7 @@ public class Message_GetToDo extends Message {
 		boolean result = true;
 
 		if(client.getToken().equals(token)) {
-			ToDo todo = ToDoModel.getToDo(ID);
+			ToDo todo = Server_ToDoModel.getToDo(ID);
 			client.senden(new Message_Result(this.getClass(), result, String.valueOf(todo)));
 		} else {
 			result = false;

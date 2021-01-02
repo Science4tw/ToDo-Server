@@ -1,4 +1,4 @@
-package server;
+package testOrGarbage;
 
 import java.util.ArrayList;
 
@@ -11,15 +11,19 @@ public class ToDoModel {
 
 //	public static ObservableList<ToDo> todos = FXCollections.observableArrayList();
 	public static ArrayList<ToDo> todos = new ArrayList<>();
+//	private ArrayList<ToDo> todosPerUser = new ArrayList<>();
+//	
+//	public void createToDoPerUser(ToDo toDo) {
+//		todosPerUser.add(toDo);
+//	}
 
 	public static int createToDo(ToDo toDo) {
-		synchronized (todos) {
 
-			toDo.setId(IDCounter + 1);
-			IDCounter++;
-			todos.add(toDo);
-			return toDo.getId();
-		}
+		toDo.setId(IDCounter + 1);
+		IDCounter++;
+		todos.add(toDo);
+		return toDo.getId();
+
 	}
 
 	/**
@@ -66,6 +70,5 @@ public class ToDoModel {
 			todos.removeIf(todo -> todo.getId() == ToDoID);
 		}
 	}
-	
 
 }

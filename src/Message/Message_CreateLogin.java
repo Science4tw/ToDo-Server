@@ -1,6 +1,7 @@
 package Message;
 
 import server.Client;
+import server.Server_ToDoModel;
 import server.Account;
 
 //Neues Login/account erstellen
@@ -38,6 +39,9 @@ public class Message_CreateLogin extends Message {
 								Account newAccount = new Account(username, password);
 								Account.add(newAccount);
 								result = true;
+								
+//								Server_ToDoModel model = new Server_ToDoModel();
+//								client.setToDoModel(model);
 							}
 						}
 					}

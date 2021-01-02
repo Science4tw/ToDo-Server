@@ -2,6 +2,7 @@ package Message;
 
 import server.Account;
 import server.Client;
+import server.Server_ToDoModel;
 
 //Login, wenn account bereits vorhanden ist
 //wenn erfolgreich, authentication token für client wird zurückgegeben
@@ -24,6 +25,8 @@ public class Message_Login extends Message {
 			client.setAccount(account);
 			String token = Account.getToken();
 			client.setToken(token);
+			
+			
 			antwort = new Message_Result(this.getClass(), true, token);
 		} else {
 			antwort = new Message_Result(this.getClass(), false);

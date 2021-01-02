@@ -3,9 +3,9 @@ package Message;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Constructor;
 import java.net.Socket;
 import java.util.ArrayList;
-
 import server.Client;
 
 public abstract class Message {
@@ -74,8 +74,7 @@ public abstract class Message {
 			System.out.println("Klasse Message: Methode empfangen: messageText.toString() = " + messageText.toString());
 
 			try {
-				// Wenn "|" im Nachrichteninhalt vorhanden ist
-//				if (messageText.contains("|") == true) {
+
 				// Break message into individual parts, and remove extra spaces
 				String[] parts = messageText.split("\\|");
 				for (int i = 0; i < parts.length; i++) {
@@ -101,7 +100,19 @@ public abstract class Message {
 				else if (parts[0].equals("DeleteToDo"))
 					message = new Message_DeleteToDo(parts);
 				System.out.println("Klasse Message: Methode empfangen: message.toString() = " + message.toString());
-
+				
+				// Create a message object of the correct class, using reflection
+				// This would be more understandable - but a *lot* longer - if we used
+				// a series of "if" statements:
+//				String messageClassName = Message.class.getPackage().getName() + "." + parts[0];
+//
+//				try {
+//					Class<?> messageClass = Class.forName(messageClassName);
+//					Constructor<?> constructor = messageClass.getConstructor(String[].class);
+//					
+//					msg = (Message) constructor.newInstance(new Object[] { parts });
+//					logger.info("Received message of type " + parts[0]);
+					
 			} catch (Exception e) {
 				System.out.println(e.toString());
 

@@ -1,5 +1,11 @@
 package client.appClasses;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Optional;
 import client.ServiceLocator;
 import client.TestClient;
@@ -22,8 +28,10 @@ import javafx.scene.input.KeyCombination;
 import server.Account;
 import server.Client;
 import server.Priority;
-import server.Server;
+import server.Server_ClientModel;
+import server.Server_Main;
 import server.ToDo;
+import testOrGarbage.App_Model;
 
 public class App_Controller extends Controller<App_Model, App_View> {
 
@@ -36,7 +44,20 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	// Konstruktor
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
-		
+
+		view.getBtnConnect().setOnAction(event -> {
+			System.out.println("App_Controller im Konstruktor: setOnAction = connect");
+			try {
+				connect();
+			} catch (UnknownHostException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+
 		model.getToDos();
 
 		// *** SZENEN WECHSEL ***
@@ -71,7 +92,7 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			view.getStage().setScene(getMainScene());
 		});
 
-		// Szenenwechsel  beiSave Button in Create todo View
+		// Szenenwechsel beiSave Button in Create todo View
 		view.getCreateToDoView().getBtnSave().setOnAction(event -> {
 			view.getCreateToDoView().reset();
 			view.getStage().setScene(getMainScene());
@@ -95,14 +116,13 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			public void handle(ActionEvent event) {
 				String port = view.getTxtPort().getText();
 				String ipAdress = view.getTxtIP().getText();
-				// Server.startServerSocket(port, ipAdress);
+				// Server_Main.startServerSocket(port, ipAdress);
 
 				Translator t = ServiceLocator.getServiceLocator().getTranslator();
 				view.setStatus(t.getString("statusLabel.initialized"));
 			}
 		});
-		
-		
+
 		// Wenn in app_View Button Delete geklickt wird
 		view.getBtnDelete().setOnAction(event -> {
 			ToDo selectedItem = view.getTableViewToDo().getSelectionModel().getSelectedItem();
@@ -126,8 +146,6 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 		});
 
-		
-				
 		// Alert für MenuItem Shortcut
 		view.getMenuHelpShortcuts().setOnAction(e -> {
 			Alert shortcutinfo = new Alert(AlertType.INFORMATION);
@@ -189,7 +207,7 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.getChangePasswordView().getBtnSave().setDisable(true);
 
 		/**
-		 *  register ourselves to handle window-closing event
+		 * register ourselves to handle window-closing event
 		 */
 		view.getStage().setOnCloseRequest(evt -> {
 			Alert closingAlert = new Alert(AlertType.CONFIRMATION);
@@ -397,21 +415,20 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.getChangePasswordView().getBtnSave().setDisable(!valid);
 	}
 
-	
-	//Action Events für CreateLogin, changePassword, create Todo
+	// Action Events für CreateLogin, changePassword, create Todo
 	private void createLogin(ActionEvent event) {
-		
-			// *************NOCH AUSFOMRULIEREN NICHT FERTIG
 
-			String username = view.getCreateAccountView().getTxtUsername().getText();
-			String password = view.getCreateAccountView().getTxtPassword().getText();
-			if (usernameValid && passwordValid) {
-				
-			if (Client.exists(username) == null) {
+		// *************NOCH AUSFOMRULIEREN NICHT FERTIG
+
+		String username = view.getCreateAccountView().getTxtUsername().getText();
+		String password = view.getCreateAccountView().getTxtPassword().getText();
+		if (usernameValid && passwordValid) {
+
+			if (Server_ClientModel.exists(username) == null) {
 				Account account = new Account(username, password);
 				Account.add(account);
 			}
-			
+
 			Translator t = ServiceLocator.getServiceLocator().getTranslator();
 			view.setStatus(t.getString("statusLabel.accountCreated"));
 
@@ -420,16 +437,16 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	}
 
 	private void changePassword(ActionEvent event) {
-		
-			// *************NOCH AUSFOMRULIEREN NICHT FERTIG
-			String username = view.getChangePasswordView().getLblUsername().getText();
-			String password = view.getChangePasswordView().getTxtPassword().getText();
-			if (passwordValid) {
-			
-		//	if (Account.exists(username) != null && Account.checkPassword(password)) {
-				// Account.changePassword(password);
 
-		//	}
+		// *************NOCH AUSFOMRULIEREN NICHT FERTIG
+		String username = view.getChangePasswordView().getLblUsername().getText();
+		String password = view.getChangePasswordView().getTxtPassword().getText();
+		if (passwordValid) {
+
+			// if (Account.exists(username) != null && Account.checkPassword(password)) {
+			// Account.changePassword(password);
+
+			// }
 			Translator t = ServiceLocator.getServiceLocator().getTranslator();
 			view.setStatus(t.getString("statusLabel.passwordChanged"));
 		}
@@ -464,4 +481,42 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	}
 	// ****** ENDE GETTER FUER DIE SZENEN ******
 
+	/**
+	 * Methode connect - Wenn der USer auf den connect Button drückt, soll
+	 * passieren: Sich der Client mit der Portnummer und
+	 * 
+	 * @throws IOException
+	 * @throws UnknownHostException
+	 */
+	public void connect() throws UnknownHostException, IOException {
+
+		String ipAddress = view.getTxtIP().getText();
+		int portNumber = Integer.parseInt(view.getTxtPort().getText());
+
+		try (Socket socket = new Socket(ipAddress, portNumber);
+				BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				OutputStreamWriter socketOut = new OutputStreamWriter(socket.getOutputStream())) {
+			System.out.println("App_Controller: Methode connect");
+			// Create thread to read incoming Message
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					String msg = ""; // Anything except null
+					while (msg != null) { // Will be null if the server closes the socket
+						try {
+							msg = socketIn.readLine();
+
+							System.out.println("Received: " + msg);
+
+						} catch (IOException e) {
+							msg = null; // end loop if we have a communications error
+						}
+					}
+				}
+			};
+			Thread t = new Thread(r);
+			t.start();
+
+		}
+	}
 }

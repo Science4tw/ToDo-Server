@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import server.Client;
 import server.Priority;
 import server.ToDo;
-import server.ToDoModel;
+import server.Server_ToDoModel;
 
 public class Message_CreateToDo extends Message {
 
@@ -49,7 +49,7 @@ public class Message_CreateToDo extends Message {
 		if (client.getToken().equals(token)) {
 			
 			ToDo todo = new ToDo(title, priority, description);
-			ToDoModel.createToDo(todo);
+			Server_ToDoModel.createToDo(todo);
 
 			System.out.println(todo);
 			result = true;

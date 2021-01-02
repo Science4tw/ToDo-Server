@@ -48,7 +48,7 @@ public class ServerThreadForClient extends Thread {
 	@Override
 	public void run() {
 
-		System.out.println("Die " + getClientIDAsText() + " ist jetzt mit dem Server verbunden.");
+		System.out.println("Die " + getClientIDAsText() + " ist jetzt mit dem Server_Main verbunden.");
 
 		// Read a message from the client
 		try {

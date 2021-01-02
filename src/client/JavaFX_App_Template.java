@@ -1,7 +1,6 @@
 package client;
 
 import client.appClasses.App_Controller;
-import client.appClasses.App_Model;
 import client.appClasses.App_View;
 import client.splashScreen.Splash_Controller;
 import client.splashScreen.Splash_Model;
@@ -9,6 +8,7 @@ import client.splashScreen.Splash_View;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import testOrGarbage.App_Model;
 
 /**
  * Copyright 2015, FHNW, Prof. Dr. Brad Richards. All rights reserved. This code

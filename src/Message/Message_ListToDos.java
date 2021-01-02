@@ -3,7 +3,7 @@ package Message;
 import java.util.ArrayList;
 
 import server.Client;
-import server.ToDoModel;
+import server.Server_ToDoModel;
 
 public class Message_ListToDos extends Message {
 
@@ -20,7 +20,7 @@ public class Message_ListToDos extends Message {
 		boolean result = true;
 
 		if (client.getToken().equals(token)) {
-			ArrayList<String> listOfIds = ToDoModel.listOfIds();
+			ArrayList<String> listOfIds = Server_ToDoModel.listOfIds();
 			client.senden(new Message_Result(this.getClass(), result, listOfIds));
 		} else {
 			result = false;

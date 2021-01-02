@@ -2,7 +2,7 @@ package Message;
 
 import server.Client;
 import server.ToDo;
-import server.ToDoModel;
+import server.Server_ToDoModel;
 
 public class Message_DeleteToDo extends Message {
 	
@@ -22,7 +22,7 @@ public class Message_DeleteToDo extends Message {
 		boolean result = true;
 
 		if(client.getToken().equals(token)) {
-			ToDoModel.deleteToDo(ID);
+			Server_ToDoModel.deleteToDo(ID);
 			client.senden(new Message_Result(this.getClass(), result));
 		} else {
 			result = false;
