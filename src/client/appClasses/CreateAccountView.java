@@ -47,12 +47,12 @@ public class CreateAccountView extends GridPane {
 		pane.setId("dataEntry");
 		// Declare the individual controls in the GUI
 		lblTitle = new Label("Account erstellen");
-		lblTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 16;");
+		lblTitle.getStyleClass().add("titlelabel");
 
 		lblUsername = new Label("Username");
 		lblPassword = new Label("Password");
-		lblInfo = new Label("Passwort muss mindestens 3-20 Zeichen lang sein, \neine Zahl, ein Gross- und ein Kleinbuchstaben enthalten.");
-		lblInfo.setStyle("-fx-font-weight: bold; -fx-font-size: 10;");
+		lblInfo = new Label("Passwortbedingungen");
+		lblInfo.getStyleClass().add("infolabel");
 		
 		// Organize the layout, add in the controls (col, row)
 		pane.add(lblTitle, 0, 0);
@@ -62,7 +62,7 @@ public class CreateAccountView extends GridPane {
 
 		pane.add(lblPassword, 0, 2);
 		pane.add(txtPassword, 1, 2);
-		pane.add(lblInfo, 0, 3);
+		pane.add(lblInfo, 1, 3);
 
 		pane.setVgap(5);
 		pane.setHgap(10);
@@ -162,6 +162,11 @@ public class CreateAccountView extends GridPane {
 		return lblPassword;
 	}
 
+	
+	public Label getLblInfo() {
+		return lblInfo;
+	}
+	
 	
 
 }
