@@ -25,6 +25,22 @@
 	-fx-font-size: 14px;
 }
 
+.infolabel {
+-fx-font-size: 10px;
+-fx-font-weight: bold;
+
+}
+
+.titlelabel {
+-fx-font-weight: bold; 
+-fx-font-size: 16;
+}
+
+.statuslabel {
+-fx-font-weight: bold; 
+-fx-font-size: 16;
+-fx-alignment: center;
+}
 
 #TopBox {
 	-fx-alignment: center;
