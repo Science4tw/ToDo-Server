@@ -67,7 +67,8 @@ public class CreateToDoView extends GridPane {
 		pane.setId("dataEntry");
 		// Declare the individual controls in the GUI
 		lblTitle = new Label("To Do erstellen");
-		lblTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 16;");
+		lblTitle.getStyleClass().add("titlelabel");
+
 
 		lblToDo = new Label("To Do");
 		lblDescription = new Label("Description");
