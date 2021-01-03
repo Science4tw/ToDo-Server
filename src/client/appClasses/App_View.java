@@ -238,6 +238,7 @@ public class App_View extends View<App_Model> {
 	public void setStatus(String message) {
 		this.lblStatus.setText(message); // status = Label
 	}
+	
 
 	// Getter & Setter Tabelview
 	public TableView<ToDo> getTableViewToDo() {
@@ -543,12 +544,15 @@ public class App_View extends View<App_Model> {
 		lblPort.setText(t.getString("lbl.port"));
 		lblUsername.setText(t.getString("lbl.user"));
 		lblPassword.setText(t.getString("lbl.password"));
-
+		
+		
 		btnLogin.setText(t.getString("button.login"));
 		btnCreateToDo.setText(t.getString("button.create"));
 		btnDelete.setText(t.getString("button.delete"));
 		btnLogout.setText(t.getString("button.logout"));
-
+		
+		lblStatus.setText(t.getString("statusLabel.beginning"));
+		
 		stage.setTitle(t.getString("program.name"));
 
 		// Labels CreateToDoView
