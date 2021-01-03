@@ -36,10 +36,11 @@
 -fx-font-size: 16;
 }
 
-.statuslabel {
--fx-font-weight: bold; 
--fx-font-size: 16;
+.statusLabel {
+-fx-padding: 5.0px;
 -fx-alignment: center;
+-fx-font-size: 14px;
+-fx-font-weight: bold;
 }
 
 #TopBox {
