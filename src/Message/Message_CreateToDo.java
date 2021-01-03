@@ -49,7 +49,7 @@ public class Message_CreateToDo extends Message {
 		if (client.getToken().equals(token)) {
 			
 			ToDo todo = new ToDo(title, priority, description);
-			Server_ToDoModel.createToDo(todo);
+			client.getModel().createToDo(todo);
 
 			System.out.println(todo);
 			result = true;

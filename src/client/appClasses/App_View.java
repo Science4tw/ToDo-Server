@@ -121,7 +121,7 @@ public class App_View extends View<App_Model> {
 		topBox.setId("TopBox");
 
 		lblIP = new Label("IP");
-		txtIP = new TextField("147.86.8.31");
+		txtIP = new TextField("127.0.0.1");
 		lblPort = new Label("Port");
 		txtPort = new TextField("50002");
 		btnConnect = new Button("Connect");

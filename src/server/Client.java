@@ -16,6 +16,8 @@ public class Client implements Sendable {
 
 	// Socket für Verbindung
 	private Socket clientSocket;
+	
+	private Server_ToDoModel model;
 
 	// Jeder Client hat auch einen Account
 	private Account account = null;
@@ -25,8 +27,9 @@ public class Client implements Sendable {
 
 	// neues client objekt, kommuniziert über socket.
 	// Startet sofort mit messages von client zu empfangen
-	public Client(Socket socket) {
+	public Client(Socket socket, Server_ToDoModel model) {
 		this.clientSocket = socket;
+		this.model = model;
 
 		// Thread um messages zu lesen
 		Runnable r = new Runnable() {
@@ -51,12 +54,13 @@ public class Client implements Sendable {
 					// When the client is no longer reachable, remove authentication and account
 					token = null;
 					account = null;
+
 				}
 			}
 		};
 		Thread t = new Thread(r);
 		t.start();
-		System.out.println("New client created: " + this.getName());
+		System.out.println("New client created: (Client)this.toString() = " + this.toString());
 	}
 
 	@Override // aus Sendable
@@ -80,7 +84,6 @@ public class Client implements Sendable {
 	}
 
 	// Getter & Setter
-
 	public Socket getClientSocket() {
 		return clientSocket;
 	}
@@ -101,4 +104,14 @@ public class Client implements Sendable {
 		return token;
 	}
 
+	public Server_ToDoModel getModel() {
+		return model;
+	}
+
+	public void setModel(Server_ToDoModel model) {
+		this.model = model;
+	}
+
+	
+	
 }

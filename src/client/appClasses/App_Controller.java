@@ -37,6 +37,10 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 	ServiceLocator serviceLocator;
 
+	Socket socket;
+	BufferedReader socketIn;
+	OutputStreamWriter socketOut;
+
 	// Speichert Wert für gültige Textfelder
 	private boolean usernameValid = false;
 	private boolean passwordValid = false;
@@ -44,14 +48,27 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	// Konstruktor
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
-
+		
 		view.getBtnConnect().setOnAction(event -> {
 			System.out.println("App_Controller im Konstruktor: setOnAction = connect");
 			try {
-				connect();
+				connect(view.getTxtIP().getText(), Integer.parseInt(view.getTxtPort().getText()));
 			} catch (UnknownHostException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+
+		view.getCreateAccountView().getBtnSave().setOnAction(event -> {
+			try {
+				System.out.println("App_Controller: Konstruktor = setOnAction CreateLogin");
+				createLogin(view.getCreateAccountView().getTxtUsername().getText(),
+						view.getCreateAccountView().getTxtPassword().getText());
+				System.out.println(view.getCreateAccountView().getTxtUsername().getText()
+						+ view.getCreateAccountView().getTxtPassword().getText());
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -94,33 +111,20 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 		// Szenenwechsel beiSave Button in Create todo View
 		view.getCreateToDoView().getBtnSave().setOnAction(event -> {
-			view.getCreateToDoView().reset();
+
 			view.getStage().setScene(getMainScene());
 		});
 
 		// Szenenwechsel bei Save button von Create Account view
 		view.getCreateAccountView().getBtnSave().setOnAction(event -> {
-			view.getCreateAccountView().reset();
+
 			view.getStage().setScene(getMainScene());
 		});
 
 		// Szenenwechsel bei Save button von Change Password view
 		view.getChangePasswordView().getBtnSave().setOnAction(event -> {
-			view.getChangePasswordView().reset();
+
 			view.getStage().setScene(getMainScene());
-		});
-
-		// ********NOCH NICHT FERTIG
-		// Wenn in View Button Connect geklickt wird
-		view.getBtnConnect().setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent event) {
-				String port = view.getTxtPort().getText();
-				String ipAdress = view.getTxtIP().getText();
-				// Server_Main.startServerSocket(port, ipAdress);
-
-				Translator t = ServiceLocator.getServiceLocator().getTranslator();
-				view.setStatus(t.getString("statusLabel.initialized"));
-			}
 		});
 
 		// Wenn in app_View Button Delete geklickt wird
@@ -162,7 +166,7 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		// CreateToDoView: Save Button unter Aktion setzen
 		view.getCreateToDoView().getBtnSave().setOnAction(this::createToDo);
 		// CreateAccountView: Save Button unter Aktion setzen
-		view.getCreateAccountView().getBtnSave().setOnAction(this::createLogin);
+//		view.getCreateAccountView().getBtnSave().setOnAction(this::createLogin);
 		// ChangePasswordView: Save Button unter Aktion setzen
 		view.getChangePasswordView().getBtnSave().setOnAction(this::changePassword);
 
@@ -347,24 +351,12 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		String password = newValue;
 		Translator t = ServiceLocator.getServiceLocator().getTranslator();
 
-		if (password.length() < 3) {
-			view.setStatus(t.getString("statusLabel.passwordtooshort"));
+		if (password.length() < 3 || password.length() > 20 || password.matches("(.[0-9].)")
+				|| password.matches("(.[A-Z].)") || password.matches("(.[a-z].)")) {
 			valid = false;
-		} else if (password.length() < 20) {
-			view.setStatus(t.getString("statusLabel.passwordtoolong"));
-			valid = false;
-		} else if (!password.matches(".*\\d.*")) {
-			view.setStatus(t.getString("statusLabel.passwortdigit"));
-			valid = false;
-		} else if (!password.matches(".*[A-Z].*")) {
-			view.setStatus(t.getString("statusLabel.passworduppercase"));
-			valid = false;
-		} else if (!password.matches(".*[a-z].*")) {
-			view.setStatus(t.getString("statusLabel.passwordlowercase"));
-			valid = false;
+		} else {
+			valid = true;
 		}
-		valid = true;
-
 		// Farben neutralisieren
 		view.getTxtPassword().getStyleClass().remove("passwordNotOk");
 		view.getTxtUsername().getStyleClass().remove("passwordOk");
@@ -415,26 +407,26 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.getChangePasswordView().getBtnSave().setDisable(!valid);
 	}
 
-	// Action Events für CreateLogin, changePassword, create Todo
-	private void createLogin(ActionEvent event) {
-
-		// *************NOCH AUSFOMRULIEREN NICHT FERTIG
-
-		String username = view.getCreateAccountView().getTxtUsername().getText();
-		String password = view.getCreateAccountView().getTxtPassword().getText();
-		if (usernameValid && passwordValid) {
-
-			if (Server_ClientModel.exists(username) == null) {
-				Account account = new Account(username, password);
-				Account.add(account);
-			}
-
-			Translator t = ServiceLocator.getServiceLocator().getTranslator();
-			view.setStatus(t.getString("statusLabel.accountCreated"));
-
-		}
-
-	}
+//	// Action Events für CreateLogin, changePassword, create Todo
+//	private void createLogin(ActionEvent event) {
+//
+//		// *************NOCH AUSFOMRULIEREN NICHT FERTIG
+//
+//		String username = view.getCreateAccountView().getTxtUsername().getText();
+//		String password = view.getCreateAccountView().getTxtPassword().getText();
+//		if (usernameValid && passwordValid) {
+//
+//			if (Server_ClientModel.exists(username) == null) {
+//				Account account = new Account(username, password);
+//				Account.add(account);
+//			}
+//
+//			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+//			view.setStatus(t.getString("statusLabel.accountCreated"));
+//
+//		}
+//
+//	}
 
 	private void changePassword(ActionEvent event) {
 
@@ -488,14 +480,13 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	 * @throws IOException
 	 * @throws UnknownHostException
 	 */
-	public void connect() throws UnknownHostException, IOException {
+	public void connect(String ipAddress, Integer portNumber) throws UnknownHostException, IOException {
 
-		String ipAddress = view.getTxtIP().getText();
-		int portNumber = Integer.parseInt(view.getTxtPort().getText());
+		socket = new Socket(ipAddress, portNumber);
 
-		try (Socket socket = new Socket(ipAddress, portNumber);
-				BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				OutputStreamWriter socketOut = new OutputStreamWriter(socket.getOutputStream())) {
+		try {
+			socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			socketOut = new OutputStreamWriter(socket.getOutputStream());
 			System.out.println("App_Controller: Methode connect");
 			// Create thread to read incoming Message
 			Runnable r = new Runnable() {
@@ -517,6 +508,24 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			Thread t = new Thread(r);
 			t.start();
 
+		} finally {
+			// socket.close();
 		}
+	}
+
+	/**
+	 * Wenn "Save" Button gedrückt wird mit Username & password, soll der CLient dem
+	 * Server eine Message_CreateLogin senden.
+	 * 
+	 * @throws IOException
+	 * 
+	 */
+
+	public void createLogin(String userName, String password) throws IOException {
+		System.out.println("CreateLogin|" + userName + "|" + password);
+
+		socketOut.write("CreateLogin|" + userName + "|" + password);
+		System.out.println("CreateLogin|" + userName + "|" + password);
+		socketOut.flush();
 	}
 }

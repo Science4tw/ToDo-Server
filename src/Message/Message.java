@@ -48,12 +48,13 @@ public abstract class Message {
 	public void senden(Socket s) {
 
 		try {
-			System.out.println("Klasse Message: Methode senden: this.toString() = " + this.toString());
+			System.out.println(s.getOutputStream());
 			OutputStreamWriter out = new OutputStreamWriter(s.getOutputStream());
+			
 			out.write(this.toString() + "\n"); //
 			System.out.println("Klasse Message: Methode senden: this.toString() = " + this.toString());
 			out.flush();
-			// s.shutdownOutput(); // ends output without closing socket
+			s.shutdownOutput(); // ends output without closing socket
 		} catch (Exception e) {
 		}
 	}

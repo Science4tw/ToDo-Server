@@ -10,16 +10,15 @@ public class Server_ToDoModel {
 	public static int IDCounter = -1;
 
 //	public static ObservableList<ToDo> todos = FXCollections.observableArrayList();
-	public static ArrayList<ToDo> todos = new ArrayList<>();
+	public ArrayList<ToDo> todos = new ArrayList<>();
 
-	public static int createToDo(ToDo toDo) {
-		synchronized (todos) {
+	public int createToDo(ToDo toDo) {
 
-			toDo.setId(IDCounter + 1);
-			IDCounter++;
-			todos.add(toDo);
-			return toDo.getId();
-		}
+		toDo.setId(IDCounter + 1);
+		IDCounter++;
+		todos.add(toDo);
+		return toDo.getId();
+
 	}
 
 	/**
@@ -27,13 +26,13 @@ public class Server_ToDoModel {
 	 * 
 	 * @return ArrayList
 	 */
-	public static ArrayList<String> listOfIds() {
+	public ArrayList<String> listOfIds() {
 
+		
 		ArrayList<String> listOfIds = new ArrayList<>();
-		synchronized (todos) {
-			for (ToDo todo : todos) {
-				listOfIds.add(Integer.toString(todo.getId()));
-			}
+
+		for (ToDo todo : todos) {
+			listOfIds.add(Integer.toString(todo.getId()));
 		}
 
 		return listOfIds;
@@ -46,12 +45,12 @@ public class Server_ToDoModel {
 	 * @param id
 	 * @return
 	 */
-	public static ToDo getToDo(int ToDoID) {
-		synchronized (todos) {
-			if (todos.stream().anyMatch(todo -> todo.getId() == ToDoID)) {
-				return todos.stream().filter(todo -> todo.getId() == ToDoID).findFirst().get();
-			}
+	public ToDo getToDo(int ToDoID) {
+
+		if (todos.stream().anyMatch(todo -> todo.getId() == ToDoID)) {
+			return todos.stream().filter(todo -> todo.getId() == ToDoID).findFirst().get();
 		}
+
 		return null;
 
 	}
@@ -61,11 +60,18 @@ public class Server_ToDoModel {
 	 * 
 	 * @param ToDoID
 	 */
-	public static void deleteToDo(int ToDoID) {
-		synchronized (todos) {
-			todos.removeIf(todo -> todo.getId() == ToDoID);
-		}
+	public void deleteToDo(int ToDoID) {
+
+		todos.removeIf(todo -> todo.getId() == ToDoID);
+
 	}
-	
+
+	public ArrayList<ToDo> getTodos() {
+		return todos;
+	}
+
+	public void setTodos(ArrayList<ToDo> todos) {
+		this.todos = todos;
+	}
 
 }

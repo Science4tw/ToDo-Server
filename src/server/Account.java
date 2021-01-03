@@ -15,8 +15,7 @@ public class Account {
 	private String emailAdress;
 	private String userName;
 	private String password;
-	
-	
+		
 	// Liste für die Accounts
 	private static final ArrayList<Account> accounts = new ArrayList<>();
 
@@ -30,8 +29,6 @@ public class Account {
 	private static final int iterations = 127;
 	//salt value: 64 byte lang
 	private final byte[] salt = new byte[64];
-	
-	
 	
 	// Konstruktor
 	public Account(String username, String password) {

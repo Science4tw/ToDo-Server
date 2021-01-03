@@ -21,7 +21,6 @@ public class JavaFX_App_Template extends Application {
     private static JavaFX_App_Template mainProgram; // singleton
     private Splash_View splashView;
     private App_View view;
-
     private ServiceLocator serviceLocator; // resources, after initialization
 
     public static void main(String[] args) {
@@ -87,7 +86,6 @@ public class JavaFX_App_Template extends Application {
      */
     public void startApp() {
         Stage appStage = new Stage();
-
         // Initialize the application MVC components. Note that these components
         // can only be initialized now, because they may depend on the
         // resources initialized by the splash screen
