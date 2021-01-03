@@ -103,8 +103,6 @@ public class App_View extends View<App_Model> {
 		this.mainScene = mainScene;
 	}
 
-	
-
 	public void start() {
 		stage.show();
 	}
@@ -219,6 +217,7 @@ public class App_View extends View<App_Model> {
 		return pane;
 
 	}
+
 	public Pane changePasswordView() {
 		Pane pane = new Pane();
 		this.setChangePasswordView(new ChangePasswordView(stage, model, controller));
@@ -226,6 +225,7 @@ public class App_View extends View<App_Model> {
 		return pane;
 
 	}
+
 	public Pane createAccountView() {
 		Pane pane = new Pane();
 		this.setCreateAccountView(new CreateAccountView(stage, model, controller));
@@ -292,7 +292,6 @@ public class App_View extends View<App_Model> {
 	public void setColDueDate(TableColumn<ToDo, String> colDueDate) {
 		this.colDueDate = colDueDate;
 	}
-
 
 	// Getter & Setter für Menu
 	public MenuItem getMenuHelpShortcuts() {
@@ -435,7 +434,7 @@ public class App_View extends View<App_Model> {
 	public void setChangePasswordView(ChangePasswordView changePasswordView) {
 		this.changePasswordView = changePasswordView;
 	}
-	
+
 	// ***** SZENEN ***** (GETTER & SETTER)
 	public Scene getCreateToDoScene() {
 		return createToDoScene;
@@ -444,6 +443,7 @@ public class App_View extends View<App_Model> {
 	public void setCreateToDoScene(Scene createToDoScene) {
 		this.createToDoScene = createToDoScene;
 	}
+
 	public Scene getCreateAccountScene() {
 		return createAccountScene;
 	}
@@ -451,6 +451,7 @@ public class App_View extends View<App_Model> {
 	public void setCreateAccountScene(Scene createAccountScene) {
 		this.createAccountScene = createAccountScene;
 	}
+
 	public Scene getChangePasswordScene() {
 		return changePasswordScene;
 	}
@@ -468,8 +469,7 @@ public class App_View extends View<App_Model> {
 	}
 
 	// ***** ENDE SZENEN *****
-	
-	
+
 	protected Scene create_GUI() {
 		ServiceLocator sl = ServiceLocator.getServiceLocator();
 		Logger logger = sl.getLogger();
@@ -559,6 +559,27 @@ public class App_View extends View<App_Model> {
 		// Buttons CreateToDoView
 		getCreateToDoView().getBtnSave().setText(t.getString("createToDoView.button.save"));
 		getCreateToDoView().getBtnCancel().setText(t.getString("createToDoView.button.cancel"));
+
+		// Labels CreateAccountView
+		getCreateAccountView().getLblTitle().setText(t.getString("createAccountView.label.title"));
+		getCreateAccountView().getLblUsername().setText(t.getString("createToDoView.label.username"));
+		getCreateAccountView().getLblPassword().setText(t.getString("createAccountView.label.password"));
+		getCreateAccountView().getLblInfo().setText(t.getString("createAccountView.label.info"));
+
+
+		// Buttons CreateAccountView
+		getCreateAccountView().getBtnSave().setText(t.getString("createAccountView.button.save"));
+		getCreateAccountView().getBtnCancel().setText(t.getString("createAccountView.button.cancel"));
+
+		// Labels ChangePasswordView
+		getChangePasswordView().getLblTitle().setText(t.getString("changePasswordView.label.title"));
+		getChangePasswordView().getLblUsername().setText(t.getString("changePasswordView.label.username"));
+		getChangePasswordView().getLblPassword().setText(t.getString("changePasswordView.label.password"));
+		getChangePasswordView().getLblInfo().setText(t.getString("changePasswordView.label.info"));
+
+		// Buttons ChangePasswordView
+		getChangePasswordView().getBtnSave().setText(t.getString("changePasswordView.button.save"));
+		getChangePasswordView().getBtnCancel().setText(t.getString("changePasswordView.button.cancel"));
 
 	}
 
