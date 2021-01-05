@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * This is a really simple test client: It reads from the scanner, sends to the
  * server, and prints the server's response. This is all in plain-text - it is
- * up to the user to type in correctly formatted Message.
+ * up to the user to type in correctly formatted messages.
  */
 public class TestClient {
 
@@ -29,15 +29,14 @@ public class TestClient {
 				System.out.println("Enter the port number on the server (1024-65535)");
 				String strPort = in.nextLine();
 				valid = validatePortNumber(strPort);
-				if (valid)
-					portNumber = Integer.parseInt(strPort);
+				if (valid) portNumber = Integer.parseInt(strPort);
 			}
 
 			try (Socket socket = new Socket(ipAddress, portNumber);
-					BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-					OutputStreamWriter socketOut = new OutputStreamWriter(socket.getOutputStream())) {
+				 BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				 OutputStreamWriter socketOut = new OutputStreamWriter(socket.getOutputStream())) {
 				System.out.println("Connected");
-				// Create thread to read incoming Message
+				// Create thread to read incoming messages
 				Runnable r = new Runnable() {
 					@Override
 					public void run() {
@@ -45,9 +44,7 @@ public class TestClient {
 						while (msg != null) { // Will be null if the server closes the socket
 							try {
 								msg = socketIn.readLine();
-
 								System.out.println("Received: " + msg);
-
 							} catch (IOException e) {
 								msg = null; // end loop if we have a communications error
 							}
@@ -57,7 +54,7 @@ public class TestClient {
 				Thread t = new Thread(r);
 				t.start();
 
-				// Allowing the user to send Message to the server
+				// Allowing the user to send messages to the server
 				// Note: We are using the same Scanner defined earlier
 				System.out.println("Enter commands to server or ctrl-D to quit");
 				while (in.hasNext()) {
@@ -71,7 +68,6 @@ public class TestClient {
 			}
 		}
 	}
-	
 
 	private static boolean validatePortNumber(String portText) {
 		boolean formatOK = false;
@@ -82,8 +78,4 @@ public class TestClient {
 		}
 		return formatOK;
 	}
-
-
-	
-	
 }

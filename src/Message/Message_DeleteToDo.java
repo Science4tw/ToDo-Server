@@ -22,7 +22,7 @@ public class Message_DeleteToDo extends Message {
 		boolean result = true;
 
 		if(client.getToken().equals(token)) {
-			Server_ToDoModel.deleteToDo(ID);
+			client.getModel().deleteToDo(ID);
 			client.senden(new Message_Result(this.getClass(), result));
 		} else {
 			result = false;

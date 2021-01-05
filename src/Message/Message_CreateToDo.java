@@ -49,6 +49,8 @@ public class Message_CreateToDo extends Message {
 		if (client.getToken().equals(token)) {
 			
 			ToDo todo = new ToDo(title, priority, description);
+			
+			// Vorher: Server_ToDoModel.createToDo(ID); (als Liste noch statisch war)
 			client.getModel().createToDo(todo);
 
 			System.out.println(todo);

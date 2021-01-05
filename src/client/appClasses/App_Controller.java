@@ -48,7 +48,10 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	// Konstruktor
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
-		
+
+		/**
+		 * DONE Connect Client with the Server Button Connect
+		 */
 		view.getBtnConnect().setOnAction(event -> {
 			System.out.println("App_Controller im Konstruktor: setOnAction = connect");
 			try {
@@ -62,6 +65,9 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			}
 		});
 
+		/**
+		 * TODO CreateLogin Button Save in CreateAccountView
+		 */
 		view.getCreateAccountView().getBtnSave().setOnAction(event -> {
 			try {
 				System.out.println("App_Controller: Konstruktor = setOnAction CreateLogin");
@@ -75,7 +81,7 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			}
 		});
 
-		model.getToDos();
+//		model.getToDos();
 
 		// *** SZENEN WECHSEL ***
 		// Szenenwechsel bei Create ToDo Button in appview
@@ -94,38 +100,35 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 		// Szenenwechsel bei cancel button in Create Todo View
 		view.getCreateToDoView().getBtnCancel().setOnAction(event -> {
-			view.getCreateToDoView().reset();
 			view.getStage().setScene(getMainScene());
 		});
 		// Szenenwechsel bei Cancel button von Create Account view
 		view.getCreateAccountView().getBtnCancel().setOnAction(event -> {
-			view.getCreateAccountView().reset();
 			view.getStage().setScene(getMainScene());
 		});
 
 		// Szenenwechsel bei Cancel button von Change Password view
 		view.getChangePasswordView().getBtnCancel().setOnAction(event -> {
-			view.getChangePasswordView().reset();
 			view.getStage().setScene(getMainScene());
 		});
 
-		// Szenenwechsel beiSave Button in Create todo View
-		view.getCreateToDoView().getBtnSave().setOnAction(event -> {
-
-			view.getStage().setScene(getMainScene());
-		});
-
-		// Szenenwechsel bei Save button von Create Account view
-		view.getCreateAccountView().getBtnSave().setOnAction(event -> {
-
-			view.getStage().setScene(getMainScene());
-		});
-
-		// Szenenwechsel bei Save button von Change Password view
-		view.getChangePasswordView().getBtnSave().setOnAction(event -> {
-
-			view.getStage().setScene(getMainScene());
-		});
+//		// Szenenwechsel beiSave Button in Create todo View
+//		view.getCreateToDoView().getBtnSave().setOnAction(event -> {
+//
+//			view.getStage().setScene(getMainScene());
+//		});
+//
+//		// Szenenwechsel bei Save button von Create Account view
+//		view.getCreateAccountView().getBtnSave().setOnAction(event -> {
+//
+//			view.getStage().setScene(getMainScene());
+//		});
+//
+//		// Szenenwechsel bei Save button von Change Password view
+//		view.getChangePasswordView().getBtnSave().setOnAction(event -> {
+//
+//			view.getStage().setScene(getMainScene());
+//		});
 
 		// Wenn in app_View Button Delete geklickt wird
 		view.getBtnDelete().setOnAction(event -> {
@@ -162,13 +165,13 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 		});
 
-		// IN DEN DREI VIEWS DIE SAVE BUTTONS
-		// CreateToDoView: Save Button unter Aktion setzen
-		view.getCreateToDoView().getBtnSave().setOnAction(this::createToDo);
-		// CreateAccountView: Save Button unter Aktion setzen
+//		// IN DEN DREI VIEWS DIE SAVE BUTTONS
+//		// CreateToDoView: Save Button unter Aktion setzen
+//		view.getCreateToDoView().getBtnSave().setOnAction(this::createToDo);
+//		// CreateAccountView: Save Button unter Aktion setzen
 //		view.getCreateAccountView().getBtnSave().setOnAction(this::createLogin);
-		// ChangePasswordView: Save Button unter Aktion setzen
-		view.getChangePasswordView().getBtnSave().setOnAction(this::changePassword);
+//		// ChangePasswordView: Save Button unter Aktion setzen
+//		view.getChangePasswordView().getBtnSave().setOnAction(this::changePassword);
 
 		/**
 		 * 3 ChangeListener für Textfelder Username und Password
@@ -515,17 +518,42 @@ public class App_Controller extends Controller<App_Model, App_View> {
 
 	/**
 	 * Wenn "Save" Button gedrückt wird mit Username & password, soll der CLient dem
-	 * Server eine Message_CreateLogin senden.
+	 * Server einen String mit Command|LoginUsername|password Message_CreateLogin
+	 * senden.
 	 * 
 	 * @throws IOException
 	 * 
 	 */
 
 	public void createLogin(String userName, String password) throws IOException {
-		System.out.println("CreateLogin|" + userName + "|" + password);
 
 		socketOut.write("CreateLogin|" + userName + "|" + password);
-		System.out.println("CreateLogin|" + userName + "|" + password);
 		socketOut.flush();
+		System.out.println("Syso: App_Controller: Methode createLogin: CreateLogin|" + userName + "|" + password);
+
+		try {
+			// Create thread to read incoming Message
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					String msg = ""; // Anything except null
+					while (msg != null) { // Will be null if the server closes the socket
+						try {
+							msg = socketIn.readLine();
+
+							System.out.println("Received: " + msg);
+
+						} catch (IOException e) {
+							msg = null; // end loop if we have a communications error
+						}
+					}
+				}
+			};
+			Thread t = new Thread(r);
+			t.start();
+			System.out.println("Syso: App_Controller: Methode createLogin: Runnable r.toString() = " + r.toString());
+		} finally {
+
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package server;
 
+import java.io.Serializable;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-public class Account {
+public class Account implements Serializable {
 
 	// Emailadresse, Username und Password
 	private String emailAdress;

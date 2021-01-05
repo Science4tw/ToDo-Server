@@ -20,7 +20,7 @@ public class Message_ListToDos extends Message {
 		boolean result = true;
 
 		if (client.getToken().equals(token)) {
-			ArrayList<String> listOfIds = Server_ToDoModel.listOfIds();
+			ArrayList<String> listOfIds = client.getModel().listOfIds();
 			client.senden(new Message_Result(this.getClass(), result, listOfIds));
 		} else {
 			result = false;

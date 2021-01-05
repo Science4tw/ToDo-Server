@@ -45,16 +45,16 @@ public abstract class Message {
 	 * 
 	 * @param s The socket to use when sending the message
 	 */
-	public void senden(Socket s) {
+	public void senden(Client client) {
 
 		try {
-			System.out.println(s.getOutputStream());
-			OutputStreamWriter out = new OutputStreamWriter(s.getOutputStream());
+			
+			OutputStreamWriter out = new OutputStreamWriter(client.getClientSocket().getOutputStream());
 			
 			out.write(this.toString() + "\n"); //
-			System.out.println("Klasse Message: Methode senden: this.toString() = " + this.toString());
 			out.flush();
-			s.shutdownOutput(); // ends output without closing socket
+			// AUSKOMMENTIERT LASSEN ANSONSTEN SENDET DER SERVER 2x!!
+			//client.getClientSocket().shutdownOutput(); // ends output without closing socket 
 		} catch (Exception e) {
 		}
 	}
@@ -72,7 +72,7 @@ public abstract class Message {
 			inputReader = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
 			String messageText = inputReader.readLine();
 			
-			System.out.println("Klasse Message: Methode empfangen: messageText.toString() = " + messageText.toString());
+			//System.out.println("Klasse Message: Methode empfangen: messageText.toString() = " + messageText.toString());
 
 			try {
 
@@ -81,7 +81,7 @@ public abstract class Message {
 				for (int i = 0; i < parts.length; i++) {
 					parts[i] = parts[i].trim();
 				}
-				System.out.println(parts[0]);
+				
 				if (parts[0].equals("Ping"))
 					message = new Message_Ping(parts);
 				else if (parts[0].equals("CreateLogin"))
@@ -100,7 +100,7 @@ public abstract class Message {
 					message = new Message_GetToDo(parts);
 				else if (parts[0].equals("DeleteToDo"))
 					message = new Message_DeleteToDo(parts);
-				System.out.println("Klasse Message: Methode empfangen: message.toString() = " + message.toString());
+				//System.out.println("Klasse Message: Methode empfangen: message.toString() = " + message.toString());
 				
 				// Create a message object of the correct class, using reflection
 				// This would be more understandable - but a *lot* longer - if we used

@@ -30,7 +30,7 @@ public class Message_GetToDo extends Message {
 		boolean result = true;
 
 		if(client.getToken().equals(token)) {
-			ToDo todo = Server_ToDoModel.getToDo(ID);
+			ToDo todo = client.getModel().getToDo(ID);
 			client.senden(new Message_Result(this.getClass(), result, String.valueOf(todo)));
 		} else {
 			result = false;

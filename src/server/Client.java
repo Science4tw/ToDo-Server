@@ -16,7 +16,7 @@ public class Client implements Sendable {
 
 	// Socket für Verbindung
 	private Socket clientSocket;
-	
+
 	private Server_ToDoModel model;
 
 	// Jeder Client hat auch einen Account
@@ -38,15 +38,16 @@ public class Client implements Sendable {
 				try {
 					while (clientReachable) {
 						Message msg = Message.empfangen(Client.this);
+						System.out.println("Klasse Client, Message.empfangen(Client.this); = " + msg.toString());
 						// Note syntax "Client.this" - writing "this" would reference Runnable object
-						if (msg != null)
+						
+						if (msg != null) {
 							msg.verarbeiten(Client.this);
-						else {
+							System.out.println("Klasse Client, Message.verarbeiten(Client.this); = " + msg.toString());
+						} else
 							// wenn ungültig oder socket nicht korrekt
 							// Rufe den Client auf und senden ihm Message Error Objekt
 							Client.this.senden(new Message_Error());
-						}
-
 					}
 				} catch (Exception e) {
 					System.out.println("Client " + Client.this.getName() + " disconnected");
@@ -60,7 +61,7 @@ public class Client implements Sendable {
 		};
 		Thread t = new Thread(r);
 		t.start();
-		System.out.println("New client created: (Client)this.toString() = " + this.toString());
+
 	}
 
 	@Override // aus Sendable
@@ -75,7 +76,8 @@ public class Client implements Sendable {
 	// sendet message an client
 	public void senden(Message message) {
 		try {
-			message.senden(clientSocket);
+			System.out.println(message.toString());
+			message.senden(this);
 
 		} catch (Exception e) {
 
@@ -108,10 +110,8 @@ public class Client implements Sendable {
 		return model;
 	}
 
-	public void setModel(Server_ToDoModel model) {
-		this.model = model;
-	}
+//	public void setModel(Server_ToDoModel model) {
+//		this.model = model;
+//	}
 
-	
-	
 }

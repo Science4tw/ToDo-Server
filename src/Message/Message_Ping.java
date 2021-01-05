@@ -15,8 +15,11 @@ public class Message_Ping extends Message {
 	@Override
 	public void verarbeiten(Client client) {
 		// TODO Auto-generated method stub
-		System.out.println("Senden");
-		client.senden(new Message_Result(true));
+
+		Message testMessage = new Message_Result(true);
+		
+		client.senden(testMessage);
+		System.out.println("Klasse Message_Ping, Methode verarbeiten - abgearbeitet| testmessage.toString() = " + testMessage.toString());
 	}
 
 }

@@ -49,6 +49,7 @@ public class Message_CreateLogin extends Message {
 
 				// sendet result
 				client.senden(new Message_Result(this.getClass(), result));
+				System.out.println("Klasse Message_CreateLogin, Methode verarbeiten: new Message Result = this.toString() = " + this.toString());
 			}
 		}
 	}
