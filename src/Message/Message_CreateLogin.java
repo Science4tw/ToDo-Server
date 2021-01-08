@@ -40,8 +40,6 @@ public class Message_CreateLogin extends Message {
 								Account.add(newAccount);
 								result = true;
 								
-//								Server_ToDoModel model = new Server_ToDoModel();
-//								client.setToDoModel(model);
 							}
 						}
 					}
@@ -49,7 +47,7 @@ public class Message_CreateLogin extends Message {
 
 				// sendet result
 				client.senden(new Message_Result(this.getClass(), result));
-				System.out.println("Klasse Message_CreateLogin, Methode verarbeiten: new Message Result = this.toString() = " + this.toString());
+				
 			}
 		}
 	}

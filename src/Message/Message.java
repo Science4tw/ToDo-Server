@@ -46,11 +46,8 @@ public abstract class Message {
 	 * @param s The socket to use when sending the message
 	 */
 	public void senden(Client client) {
-
 		try {
-			
 			OutputStreamWriter out = new OutputStreamWriter(client.getClientSocket().getOutputStream());
-			
 			out.write(this.toString() + "\n"); //
 			out.flush();
 			// AUSKOMMENTIERT LASSEN ANSONSTEN SENDET DER SERVER 2x!!
@@ -67,12 +64,11 @@ public abstract class Message {
 
 	public static Message empfangen(Client client) {
 		Message message = null;
-		BufferedReader inputReader;
 		try {
-			inputReader = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
+			BufferedReader inputReader = new BufferedReader(new InputStreamReader(client.getClientSocket().getInputStream()));
 			String messageText = inputReader.readLine();
 			
-			//System.out.println("Klasse Message: Methode empfangen: messageText.toString() = " + messageText.toString());
+			System.out.println("Klasse Message: Methode empfangen: messageText.toString() = " + messageText.toString());
 
 			try {
 

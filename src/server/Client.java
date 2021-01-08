@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import Message.Message;
 import Message.Message_Error;
+import Message.Message_Result;
 
 /**
  * Aus der Sicht des Servers repräsentiert diese Klasse den Client.
@@ -23,34 +24,39 @@ public class Client implements Sendable {
 	private Account account = null;
 	private String token = null;
 
-	private boolean clientReachable = true;
+	// ID
+	private static int clientCounter = 0;
+	private int clientID;
+	
 
 	// neues client objekt, kommuniziert über socket.
 	// Startet sofort mit messages von client zu empfangen
 	public Client(Socket socket, Server_ToDoModel model) {
 		this.clientSocket = socket;
 		this.model = model;
+		this.clientID = clientCounter;
+		clientCounter++;
 
 		// Thread um messages zu lesen
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
-				try {
-					while (clientReachable) {
+				System.out.println("The " + getClientIDAsText() + " has connected" );
+				Client.this.senden(new Message_Result(true));
+				
+				try {		
+					while (Client.this.clientSocket != null) {
 						Message msg = Message.empfangen(Client.this);
-						System.out.println("Klasse Client, Message.empfangen(Client.this); = " + msg.toString());
 						// Note syntax "Client.this" - writing "this" would reference Runnable object
-						
 						if (msg != null) {
 							msg.verarbeiten(Client.this);
-							System.out.println("Klasse Client, Message.verarbeiten(Client.this); = " + msg.toString());
 						} else
 							// wenn ungültig oder socket nicht korrekt
 							// Rufe den Client auf und senden ihm Message Error Objekt
 							Client.this.senden(new Message_Error());
 					}
 				} catch (Exception e) {
-					System.out.println("Client " + Client.this.getName() + " disconnected");
+					System.out.println("The " + getClientIDAsText() + " disconnected");
 				} finally {
 					// When the client is no longer reachable, remove authentication and account
 					token = null;
@@ -83,6 +89,9 @@ public class Client implements Sendable {
 
 		}
 
+	}
+	public String getClientIDAsText() {
+		return "Client ID #" + clientID;
 	}
 
 	// Getter & Setter

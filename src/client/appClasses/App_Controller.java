@@ -1,6 +1,7 @@
 package client.appClasses;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -8,38 +9,33 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Optional;
 import client.ServiceLocator;
-import client.TestClient;
 import client.abstractClasses.Controller;
 import client.commonClasses.Translator;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import server.Account;
-import server.Client;
 import server.Priority;
-import server.Server_ClientModel;
-import server.Server_Main;
 import server.ToDo;
 import testOrGarbage.App_Model;
 
 public class App_Controller extends Controller<App_Model, App_View> {
+	
+	private Socket socket = null;
+	
+	private BufferedWriter bufferedWriter = null;
+	private OutputStreamWriter outputStreamWriter = null;
+	
+	private BufferedReader bufferedReader = null;
+	private InputStreamReader inputStreamReader = null;
 
+	private boolean connected = false;
+	
 	ServiceLocator serviceLocator;
-
-	Socket socket;
-	BufferedReader socketIn;
-	OutputStreamWriter socketOut;
 
 	// Speichert Wert für gültige Textfelder
 	private boolean usernameValid = false;
@@ -49,36 +45,40 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
 
+		
+		
+		
 		/**
 		 * DONE Connect Client with the Server Button Connect
 		 */
 		view.getBtnConnect().setOnAction(event -> {
-			System.out.println("App_Controller im Konstruktor: setOnAction = connect");
+			System.out.println("User klickte: 'connect'");
+			System.out.println(view.getTxtIP().getText());
+			System.out.println(view.getTxtPort().getText());
+			connect(view.getTxtIP().getText(), Integer.parseInt(view.getTxtPort().getText()));
+			
+		});
+
+		/**
+		 * DONE CreateLogin Button Save in CreateAccountView
+		 */
+		view.getCreateAccountView().getBtnSave().setOnAction(event -> {
 			try {
-				connect(view.getTxtIP().getText(), Integer.parseInt(view.getTxtPort().getText()));
-			} catch (UnknownHostException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
+				System.out.println("User klickte: 'create Account' (CreateLogin)");
+				createLogin(view.getCreateAccountView().getTxtUsername().getText(),
+						view.getCreateAccountView().getTxtPassword().getText());
+				view.getStage().setScene(getMainScene());
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		});
-
+		
 		/**
-		 * TODO CreateLogin Button Save in CreateAccountView
+		 * TODO Login
 		 */
-		view.getCreateAccountView().getBtnSave().setOnAction(event -> {
-			try {
-				System.out.println("App_Controller: Konstruktor = setOnAction CreateLogin");
-				createLogin(view.getCreateAccountView().getTxtUsername().getText(),
-						view.getCreateAccountView().getTxtPassword().getText());
-				System.out.println(view.getCreateAccountView().getTxtUsername().getText()
-						+ view.getCreateAccountView().getTxtPassword().getText());
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		view.getBtnLogin().setOnAction(event -> {
+			login(view.getTxtUsername().getText(), view.getTxtPassword().getText());
 		});
 
 //		model.getToDos();
@@ -230,62 +230,6 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			closingAlert.showAndWait().filter(r -> r != ButtonType.OK).ifPresent(r -> evt.consume());
 		});
 
-		/**
-		 * Shortcuts
-		 */
-		// set shortcut ctrl'c to create to do
-		view.getBtnCreateToDo().getScene().getAccelerators()
-				.put(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN), new Runnable() {
-					public void run() {
-						view.getBtnCreateToDo().fire();
-					}
-				});
-
-		// set shortcut ctrl'd to delete to do
-		view.getBtnDelete().getScene().getAccelerators()
-				.put(new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN), new Runnable() {
-					public void run() {
-						view.getBtnDelete().fire();
-					}
-				});
-		// set shortcut ctrl's to save ToDo, Password, Account
-		view.getCreateToDoView().getBtnSave().getScene().getAccelerators()
-				.put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN), new Runnable() {
-					public void run() {
-						view.getCreateToDoView().getBtnSave().fire();
-					}
-				});
-		view.getCreateAccountView().getBtnSave().getScene().getAccelerators()
-				.put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN), new Runnable() {
-					public void run() {
-						view.getCreateAccountView().getBtnSave().fire();
-					}
-				});
-		view.getChangePasswordView().getBtnSave().getScene().getAccelerators()
-				.put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN), new Runnable() {
-					public void run() {
-						view.getChangePasswordView().getBtnSave().fire();
-					}
-				});
-		// set shortcut ctrl'c to cancel ToDo, Password, Account
-		view.getCreateToDoView().getBtnCancel().getScene().getAccelerators()
-				.put(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN), new Runnable() {
-					public void run() {
-						view.getCreateToDoView().getBtnCancel().fire();
-					}
-				});
-		view.getCreateAccountView().getBtnCancel().getScene().getAccelerators()
-				.put(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN), new Runnable() {
-					public void run() {
-						view.getCreateAccountView().getBtnCancel().fire();
-					}
-				});
-		view.getChangePasswordView().getBtnCancel().getScene().getAccelerators()
-				.put(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN), new Runnable() {
-					public void run() {
-						view.getChangePasswordView().getBtnCancel().fire();
-					}
-				});
 
 		serviceLocator = ServiceLocator.getServiceLocator();
 		serviceLocator.getLogger().info("Application controller initialized");
@@ -483,77 +427,86 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	 * @throws IOException
 	 * @throws UnknownHostException
 	 */
-	public void connect(String ipAddress, Integer portNumber) throws UnknownHostException, IOException {
-
-		socket = new Socket(ipAddress, portNumber);
+	public void connect(String ipAddress, Integer portNumber) {
 
 		try {
-			socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			socketOut = new OutputStreamWriter(socket.getOutputStream());
-			System.out.println("App_Controller: Methode connect");
-			// Create thread to read incoming Message
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					String msg = ""; // Anything except null
-					while (msg != null) { // Will be null if the server closes the socket
-						try {
-							msg = socketIn.readLine();
+			
+		socket = new Socket(ipAddress, portNumber);
+		inputStreamReader = new InputStreamReader(socket.getInputStream());
+		bufferedReader = new BufferedReader(inputStreamReader);
+		outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
+		bufferedWriter = new BufferedWriter(outputStreamWriter);
+		connected = true;
+		System.out.println("Client hat sich verbunden mit dem Server");
+		
+		
+		
+		
+		// Create thread to read incoming Message
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				String msg = ""; // Anything except null
+				while (msg != null) { // Will be null if the server closes the socket
+					
+					try {
+						msg = bufferedReader.readLine();
+						System.out.println("Received: " + msg);
 
-							System.out.println("Received: " + msg);
-
-						} catch (IOException e) {
-							msg = null; // end loop if we have a communications error
-						}
+					} catch (IOException e) {
+						msg = null; // end loop if we have a communications error
 					}
 				}
-			};
-			Thread t = new Thread(r);
-			t.start();
-
-		} finally {
-			// socket.close();
+			}
+		};
+		Thread t = new Thread(r);
+		t.start();	 
+		}catch(Exception e) {
+			connected = false;
+			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * Wenn "Save" Button gedrückt wird mit Username & password, soll der CLient dem
-	 * Server einen String mit Command|LoginUsername|password Message_CreateLogin
+	 * Server einen String mit Command|LoginUsername|password (Message_CreateLogin)
 	 * senden.
-	 * 
-	 * @throws IOException
+	 * @throws Exception 
 	 * 
 	 */
 
-	public void createLogin(String userName, String password) throws IOException {
-
-		socketOut.write("CreateLogin|" + userName + "|" + password);
-		socketOut.flush();
-		System.out.println("Syso: App_Controller: Methode createLogin: CreateLogin|" + userName + "|" + password);
-
-		try {
-			// Create thread to read incoming Message
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					String msg = ""; // Anything except null
-					while (msg != null) { // Will be null if the server closes the socket
-						try {
-							msg = socketIn.readLine();
-
-							System.out.println("Received: " + msg);
-
-						} catch (IOException e) {
-							msg = null; // end loop if we have a communications error
-						}
-					}
-				}
-			};
-			Thread t = new Thread(r);
-			t.start();
-			System.out.println("Syso: App_Controller: Methode createLogin: Runnable r.toString() = " + r.toString());
-		} finally {
-
+	public void createLogin(String userName, String password) {
+		if(connected) {
+			try {
+				bufferedWriter.write("CreateLogin|" + userName + "|" + password);
+				bufferedWriter.newLine();
+				bufferedWriter.flush();
+				
+				System.out.println("Sent: CreateLogin|" + userName + "|" + password);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Wenn "Login" Buttonm gedrückt wird mit Username & password einloggen
+	 */
+	public void login(String userName, String password) {
+		if(connected) {
+			try {
+				bufferedWriter.write("Login|" + userName + "|" + password);
+				bufferedWriter.newLine();
+				bufferedWriter.flush();
+				
+				System.out.println("Sent: Login|" + userName + "|" + password);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

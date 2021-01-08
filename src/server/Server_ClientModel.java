@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Server_ClientModel {
 	
 	// Liste um die Clients zu speichern
-	private static final ArrayList<Client> clients = new ArrayList<>();
+	private static ArrayList<Client> clients = new ArrayList<>();
 
 	
 	// neuer client hinzufügen zu clients
@@ -25,7 +25,7 @@ public class Server_ClientModel {
 		}
 		return null;
 	}
-	public ArrayList<Client> getClients() {
+	public static ArrayList<Client> getClients() {
 		return clients;
 	}
 
