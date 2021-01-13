@@ -1,26 +1,37 @@
 package server;
 
 public class ToDo {
+	
+	public int toDoCounter = 0;
 
 	private int id;
 	private String title;
 	private String description;
 	private Priority priority;
-	private String dueDate;
-	private Account account;
+//	private String dueDate;
+//	private Account account;
 
-	public ToDo(String title, Priority priority, String description) {
-		this.title = title;
-		this.priority = priority;
-		this.description = description;
-	}
+//	public ToDo(String title, Priority priority, String description) {
+//		this.title = title;
+//		this.priority = priority;
+//		this.description = description;
+//	}
 	
-	public ToDo(int id, Account account, String title, Priority priority, String description) {
+	public ToDo(int id, String title, Priority priority, String description) {
 		this.id = id;
 		this.title = title;
 		this.priority = priority;
 		this.description = description;
-		this.account = account;
+//		this.account = account;
+	}
+	
+	public ToDo(String title, Priority priority, String description) {
+		this.id = toDoCounter;
+		this.title = title;
+		this.priority = priority;
+		this.description = description;
+		toDoCounter++;
+//		this.account = account;
 	}
 
 	public int getId() {
@@ -55,26 +66,26 @@ public class ToDo {
 		this.priority = priority;
 	}
 
-	public String getDueDate() {
-		return dueDate;
-	}
-
-	public void setDueDate(String dueDate) {
-		this.dueDate = dueDate;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
-	}
+//	public String getDueDate() {
+//		return dueDate;
+//	}
+//
+//	public void setDueDate(String dueDate) {
+//		this.dueDate = dueDate;
+//	}
+//
+//	public Account getAccount() {
+//		return account;
+//	}
+//
+//	public void setAccount(Account account) {
+//		this.account = account;
+//	}
 
 	@Override
 	public String toString() {
 		return "ToDo [id=" + id + ", title=" + title + ", description=" + description + ", priority=" + priority
-				+ ", dueDate=" + dueDate + ", account=" + account + "]";
+				+  "]";
 	}
 
 	

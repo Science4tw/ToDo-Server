@@ -9,6 +9,13 @@ import server.ToDo;
 
 public class App_Model extends Model {
 
+	private ObservableList<ToDo> toDos = FXCollections.observableArrayList();
 
+	public ObservableList<ToDo> getToDos() {
+		return toDos;
+	}
 
+	
+	
+	
 }

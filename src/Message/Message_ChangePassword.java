@@ -15,22 +15,25 @@ public class Message_ChangePassword extends Message {
 
 	@Override
 	public void verarbeiten(Client client) {
+		System.out.println("Changepassword start");
 		boolean result = false;
-		if (client.getToken().equals(token)) { //prüft, ob token gültig
+		if (client.getToken().equals(token)) { // prüft, ob token gültig
 			Account account = client.getAccount();
+			System.out.println(client.getAccount());
 
-			// Prüft Password: mind. 3, max. 20 Zeichen, mind. 1 digit, 1 Gross- und 1 Kleinbuchstaben
-			if (password != null && password.length() > 3 && password.length() < 20 && !password.matches(".*\\d.*")
-					&& !password.matches(".*[A-Z].*") && !password.matches(".*[a-z].*")) {
+			// Prüft Password: mind. 3, max. 20 Zeichen, mind. 1 digit, 1 Gross- und 1
+			// Kleinbuchstaben
+			if (password != null && password.length() > 3 && password.length() < 20
+					&& password.matches(".*\\d.*") && password.matches(".*[A-Z].*")
+					&& password.matches(".*[a-z].*")) {
 				account.changePassword(password);
 				result = true;
 			} else {
 				result = false;
 
-			} 
+			}
 			// sendet result
 			client.senden(new Message_Result(this.getClass(), result));
 		}
-
 	}
 }

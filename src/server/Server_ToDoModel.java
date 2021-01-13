@@ -7,10 +7,10 @@ import javafx.collections.ObservableList;
 
 public class Server_ToDoModel {
 
-	public static int IDCounter = -1;
+	private int IDCounter = -1;
 
 //	public static ObservableList<ToDo> todos = FXCollections.observableArrayList();
-	public ArrayList<ToDo> todos = new ArrayList<>();
+	private ArrayList<ToDo> todos = new ArrayList<>();
 
 	public int createToDo(ToDo toDo) {
 
