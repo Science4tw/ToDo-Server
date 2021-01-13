@@ -42,7 +42,7 @@ public class Client implements Sendable {
 			@Override
 			public void run() {
 				System.out.println("The " + getClientIDAsText() + " has connected" );
-				Client.this.senden(new Message_Result(true));
+//				Client.this.senden(new Message_Result(true));
 				
 				try {		
 					while (Client.this.clientSocket != null) {

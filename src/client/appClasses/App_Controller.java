@@ -7,11 +7,22 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import client.ServiceLocator;
 import client.abstractClasses.Controller;
 import client.commonClasses.Translator;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -19,22 +30,29 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
+import server.Client;
 import server.Priority;
+import server.Server_ToDoModel;
 import server.ToDo;
 import testOrGarbage.App_Model;
 
 public class App_Controller extends Controller<App_Model, App_View> {
-	
+
+	private String token = null;
+
 	private Socket socket = null;
+	private ArrayList<Integer> ids = null;
 	
+	private ObservableList<ToDo> toDos = FXCollections.observableArrayList();
+
 	private BufferedWriter bufferedWriter = null;
 	private OutputStreamWriter outputStreamWriter = null;
-	
+
 	private BufferedReader bufferedReader = null;
 	private InputStreamReader inputStreamReader = null;
 
 	private boolean connected = false;
-	
+
 	ServiceLocator serviceLocator;
 
 	// Speichert Wert für gültige Textfelder
@@ -45,22 +63,17 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
 
-		
-		
-		
 		/**
-		 * DONE Connect Client with the Server Button Connect
+		 * DONE - Connect Client with the Server Button Connect
 		 */
 		view.getBtnConnect().setOnAction(event -> {
 			System.out.println("User klickte: 'connect'");
-			System.out.println(view.getTxtIP().getText());
-			System.out.println(view.getTxtPort().getText());
 			connect(view.getTxtIP().getText(), Integer.parseInt(view.getTxtPort().getText()));
-			
+
 		});
 
 		/**
-		 * DONE CreateLogin Button Save in CreateAccountView
+		 * DONE - CreateLogin Button Save in CreateAccountView
 		 */
 		view.getCreateAccountView().getBtnSave().setOnAction(event -> {
 			try {
@@ -73,15 +86,23 @@ public class App_Controller extends Controller<App_Model, App_View> {
 				e1.printStackTrace();
 			}
 		});
-		
+
 		/**
-		 * TODO Login
+		 * DONE - Login
 		 */
 		view.getBtnLogin().setOnAction(event -> {
 			login(view.getTxtUsername().getText(), view.getTxtPassword().getText());
 		});
 
-//		model.getToDos();
+		/**
+		 * TODO - CreateToDO
+		 */
+		view.getCreateToDoView().getBtnSave().setOnAction(event -> {
+			
+			createToDo(view.getCreateToDoView().getTxtToDo().getText(),
+					view.getCreateToDoView().getCmbPriority().getValue(),
+					view.getCreateToDoView().getTxtDescription().getText());
+		});
 
 		// *** SZENEN WECHSEL ***
 		// Szenenwechsel bei Create ToDo Button in appview
@@ -112,67 +133,6 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			view.getStage().setScene(getMainScene());
 		});
 
-//		// Szenenwechsel beiSave Button in Create todo View
-//		view.getCreateToDoView().getBtnSave().setOnAction(event -> {
-//
-//			view.getStage().setScene(getMainScene());
-//		});
-//
-//		// Szenenwechsel bei Save button von Create Account view
-//		view.getCreateAccountView().getBtnSave().setOnAction(event -> {
-//
-//			view.getStage().setScene(getMainScene());
-//		});
-//
-//		// Szenenwechsel bei Save button von Change Password view
-//		view.getChangePasswordView().getBtnSave().setOnAction(event -> {
-//
-//			view.getStage().setScene(getMainScene());
-//		});
-
-		// Wenn in app_View Button Delete geklickt wird
-		view.getBtnDelete().setOnAction(event -> {
-			ToDo selectedItem = view.getTableViewToDo().getSelectionModel().getSelectedItem();
-			Alert alertDelete = new Alert(AlertType.CONFIRMATION);
-			Translator t = ServiceLocator.getServiceLocator().getTranslator();
-			alertDelete.setTitle(t.getString("alert.alertDelet.title"));
-			alertDelete.setHeaderText(t.getString("alert.alertDelet.header"));
-
-			Button okButton = (Button) alertDelete.getDialogPane().lookupButton(ButtonType.OK);
-			okButton.setText(t.getString("alert.buttonOk"));
-			Button cancelButton = (Button) alertDelete.getDialogPane().lookupButton(ButtonType.CANCEL);
-			cancelButton.setText(t.getString("alert.buttonCancel"));
-
-			Optional<ButtonType> result = alertDelete.showAndWait();
-			if (result.get() == ButtonType.OK) {
-				view.getTableViewToDo().getItems().remove(selectedItem);
-				view.setStatus(t.getString("statusLabel.deletedToDo"));
-			} else {
-
-			}
-
-		});
-
-		// Alert für MenuItem Shortcut
-		view.getMenuHelpShortcuts().setOnAction(e -> {
-			Alert shortcutinfo = new Alert(AlertType.INFORMATION);
-
-			Translator t = ServiceLocator.getServiceLocator().getTranslator();
-			shortcutinfo.setTitle(t.getString("alert.shortcutinfo.title"));
-			shortcutinfo.setHeaderText(t.getString("alert.shortcutinfo.header"));
-			shortcutinfo.setContentText(t.getString("alert.shortcutinfo.content"));
-			shortcutinfo.showAndWait();
-
-		});
-
-//		// IN DEN DREI VIEWS DIE SAVE BUTTONS
-//		// CreateToDoView: Save Button unter Aktion setzen
-//		view.getCreateToDoView().getBtnSave().setOnAction(this::createToDo);
-//		// CreateAccountView: Save Button unter Aktion setzen
-//		view.getCreateAccountView().getBtnSave().setOnAction(this::createLogin);
-//		// ChangePasswordView: Save Button unter Aktion setzen
-//		view.getChangePasswordView().getBtnSave().setOnAction(this::changePassword);
-
 		/**
 		 * 3 ChangeListener für Textfelder Username und Password
 		 */
@@ -202,16 +162,16 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.getBtnDelete().disableProperty()
 				.bind(Bindings.isEmpty(view.getTableViewToDo().getSelectionModel().getSelectedItems()));
 
-		/**
-		 * Buttons beim ersten Aufruf, leeren Feldern oder keiner Änderung deaktivieren
-		 */
-		view.getBtnLogin().setDisable(true);
-		view.getBtnLogout().setDisable(true);
-		// view.getBtnCreate().setDisable(true);
-
-		view.getCreateToDoView().getBtnSave().setDisable(true);
-		view.getCreateAccountView().getBtnSave().setDisable(true);
-		view.getChangePasswordView().getBtnSave().setDisable(true);
+//		/**
+//		 * Buttons beim ersten Aufruf, leeren Feldern oder keiner Änderung deaktivieren
+//		 */
+//		view.getBtnLogin().setDisable(true);
+//		view.getBtnLogout().setDisable(true);
+//		// view.getBtnCreate().setDisable(true);
+//
+//		view.getCreateToDoView().getBtnSave().setDisable(true);
+//		view.getCreateAccountView().getBtnSave().setDisable(true);
+//		view.getChangePasswordView().getBtnSave().setDisable(true);
 
 		/**
 		 * register ourselves to handle window-closing event
@@ -230,7 +190,6 @@ public class App_Controller extends Controller<App_Model, App_View> {
 			closingAlert.showAndWait().filter(r -> r != ButtonType.OK).ifPresent(r -> evt.consume());
 		});
 
-
 		serviceLocator = ServiceLocator.getServiceLocator();
 		serviceLocator.getLogger().info("Application controller initialized");
 	}
@@ -239,9 +198,9 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		return view.getTableViewToDo();
 	}
 
-//3 METHODEN; UM INPUT ZU VALIDIEREN MIT CHANGELISTENER
+	// 3 METHODEN; UM INPUT ZU VALIDIEREN MIT CHANGELISTENER
 
-//Für Username (Emailadresse)
+	// Für Username (Emailadresse)
 	private void validateUsername(String newValue) {
 		boolean valid = false; // email not ok
 
@@ -354,27 +313,6 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.getChangePasswordView().getBtnSave().setDisable(!valid);
 	}
 
-//	// Action Events für CreateLogin, changePassword, create Todo
-//	private void createLogin(ActionEvent event) {
-//
-//		// *************NOCH AUSFOMRULIEREN NICHT FERTIG
-//
-//		String username = view.getCreateAccountView().getTxtUsername().getText();
-//		String password = view.getCreateAccountView().getTxtPassword().getText();
-//		if (usernameValid && passwordValid) {
-//
-//			if (Server_ClientModel.exists(username) == null) {
-//				Account account = new Account(username, password);
-//				Account.add(account);
-//			}
-//
-//			Translator t = ServiceLocator.getServiceLocator().getTranslator();
-//			view.setStatus(t.getString("statusLabel.accountCreated"));
-//
-//		}
-//
-//	}
-
 	private void changePassword(ActionEvent event) {
 
 		// *************NOCH AUSFOMRULIEREN NICHT FERTIG
@@ -391,34 +329,10 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		}
 	}
 
-	private void createToDo(ActionEvent event) {
-		// ************MUSS NOCH ANGEPASST WERDEN
-		String title = view.getCreateToDoView().getTxtToDo().getText();
-		Priority priority = view.getCreateToDoView().getCmbPriority().getValue();
-		String description = view.getCreateToDoView().getTxtDescription().getText();
-
-		// 4. Überprüfen das Kontrollelemente nicht leer sind
-		if (title != null && priority != null && description != null) {
-
-			// 5
-			model.createToDo(title, priority, description);
-			Translator t = ServiceLocator.getServiceLocator().getTranslator();
-			view.setStatus(t.getString("statusLabel.createToDo"));
-			view.getCreateToDoView().reset();
-		}
-	}
-	// ****** SZENEN WECHSEL ******
-
-	// ****** ENDE SZENEN WECHSEL ******
-
-	// ****** GETTER FUER DIE SZENNEN ******
-	// Methode um die CreateToDo Szene aus der App_View zu holen
-
 	// Methode um die Country Szene aus der App_View zu holen
 	private Scene getMainScene() {
 		return view.getMainScene();
 	}
-	// ****** ENDE GETTER FUER DIE SZENEN ******
 
 	/**
 	 * Methode connect - Wenn der USer auf den connect Button drückt, soll
@@ -430,38 +344,63 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	public void connect(String ipAddress, Integer portNumber) {
 
 		try {
-			
-		socket = new Socket(ipAddress, portNumber);
-		inputStreamReader = new InputStreamReader(socket.getInputStream());
-		bufferedReader = new BufferedReader(inputStreamReader);
-		outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-		bufferedWriter = new BufferedWriter(outputStreamWriter);
-		connected = true;
-		System.out.println("Client hat sich verbunden mit dem Server");
-		
-		
-		
-		
-		// Create thread to read incoming Message
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				String msg = ""; // Anything except null
-				while (msg != null) { // Will be null if the server closes the socket
-					
-					try {
-						msg = bufferedReader.readLine();
-						System.out.println("Received: " + msg);
 
-					} catch (IOException e) {
-						msg = null; // end loop if we have a communications error
+			socket = new Socket(ipAddress, portNumber);
+			inputStreamReader = new InputStreamReader(socket.getInputStream());
+			bufferedReader = new BufferedReader(inputStreamReader);
+			outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
+			bufferedWriter = new BufferedWriter(outputStreamWriter);
+			connected = true;
+			System.out.println("Client hat sich verbunden mit dem Server");
+
+			// Create thread to read incoming Message
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					String msg = ""; // Anything except null
+					while (msg != null) { // Will be null if the server closes the socket
+
+						try {
+							
+							msg = bufferedReader.readLine();
+							System.out.println("Received: " + msg);
+							// Break message into individual parts, and remove extra spaces
+							String[] parts = msg.split("\\|");
+							for (int i = 0; i < parts.length; i++) {
+								parts[i] = parts[i].trim();
+							}
+							
+							if(parts[0].equals("Result") && parts[1].equals("Message_Login") && Boolean.parseBoolean(parts[2]))
+							{
+								token = parts[3];
+							}
+							
+							if(parts[0].equals("Result") && parts[1].equals("Message_ListToDos"))
+							{
+								ids = new ArrayList<Integer>();
+								for(int i = 3; i < parts.length; i++)
+								{
+									ids.add(Integer.parseInt(parts[i]));
+								}
+							}
+
+							if(parts[0].equals("Result") && parts[1].equals("Message_GetToDo"))
+							{
+								toDos.add(new ToDo(parts[4], Priority.valueOf(parts[6]), parts[5]));
+								System.out.println(toDos);
+							}
+							
+							
+
+						} catch (IOException e) {
+							msg = null; // end loop if we have a communications error
+						}
 					}
 				}
-			}
-		};
-		Thread t = new Thread(r);
-		t.start();	 
-		}catch(Exception e) {
+			};
+			Thread t = new Thread(r);
+			t.start();
+		} catch (Exception e) {
 			connected = false;
 			e.printStackTrace();
 		}
@@ -471,19 +410,96 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	 * Wenn "Save" Button gedrückt wird mit Username & password, soll der CLient dem
 	 * Server einen String mit Command|LoginUsername|password (Message_CreateLogin)
 	 * senden.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 * 
 	 */
-
 	public void createLogin(String userName, String password) {
-		if(connected) {
+		if (connected) {
 			try {
 				bufferedWriter.write("CreateLogin|" + userName + "|" + password);
 				bufferedWriter.newLine();
 				bufferedWriter.flush();
-				
+
 				System.out.println("Sent: CreateLogin|" + userName + "|" + password);
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Wenn "Login" Buttonm gedrückt wird mit Username & password einloggen
+	 */
+	public void login(String userName, String password) {
+		if (connected) {
+			try {
+				bufferedWriter.write("Login|" + userName + "|" + password);
+				bufferedWriter.newLine();
+				bufferedWriter.flush();
+				System.out.println("Sent: Login|" + userName + "|" + password);
+
+			} catch (Exception e) {
+//				connected = false;
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void createToDo(String title, Priority priority, String description) {
+		// 4. Überprüfen das Kontrollelemente nicht leer sind
+
+		if (title != null && priority != null && description != null && isTokenSet()) {
+			try {
+				bufferedWriter.write("CreateToDo|" + token + "|" + title + "|" + priority + "|" + description);
+				bufferedWriter.newLine();
+				bufferedWriter.flush();
+				System.out.println("Sent: CreateToDo|" + token + "|" + title + "|" + priority + "|" + description);
 				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				listToDos();
+			}
+
+		}
+	}
+	
+	
+	public void listToDos()
+	{
+		if(isTokenSet())
+		{
+			try {
+				bufferedWriter.write("ListToDos|" + token);
+				bufferedWriter.newLine();
+				bufferedWriter.flush();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				getToDos();
+			}
+		}
+	}
+	
+	public void getToDos()
+	{
+		System.out.println(ids);
+		if(isTokenSet() && ids !=null)
+		{
+			try {
+				for(Integer id : ids)
+				{
+					bufferedWriter.write("GetToDo|" + token + "|"+ id);
+					bufferedWriter.newLine();
+					bufferedWriter.flush();
+				}
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -491,22 +507,22 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		}
 	}
 	
-	/**
-	 * Wenn "Login" Buttonm gedrückt wird mit Username & password einloggen
-	 */
-	public void login(String userName, String password) {
-		if(connected) {
-			try {
-				bufferedWriter.write("Login|" + userName + "|" + password);
-				bufferedWriter.newLine();
-				bufferedWriter.flush();
-				
-				System.out.println("Sent: Login|" + userName + "|" + password);
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
+	public String getToken() {
+		return token;
 	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	private boolean isTokenSet()
+	{
+		return (token == null)?false:true;
+	}
+
+	public ObservableList<ToDo> getTheList(){
+		return toDos;
+	}
+	
 }

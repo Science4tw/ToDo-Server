@@ -10,14 +10,17 @@ public class ToDo {
 	private Account account;
 
 	public ToDo(String title, Priority priority, String description) {
+		this.title = title;
+		this.priority = priority;
+		this.description = description;
+	}
+	
+	public ToDo(int id, Account account, String title, Priority priority, String description) {
 		this.id = id;
 		this.title = title;
 		this.priority = priority;
 		this.description = description;
-//		this.priority = priority;
-//		this.dueDate = dueDate;
-//		this.account = account;
-
+		this.account = account;
 	}
 
 	public int getId() {

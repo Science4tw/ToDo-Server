@@ -1,5 +1,7 @@
 package Message;
 
+import java.util.ArrayList;
+
 import server.Client;
 import server.ToDo;
 import server.Server_ToDoModel;
@@ -30,8 +32,16 @@ public class Message_GetToDo extends Message {
 		boolean result = true;
 
 		if(client.getToken().equals(token)) {
+
 			ToDo todo = client.getModel().getToDo(ID);
-			client.senden(new Message_Result(this.getClass(), result, String.valueOf(todo)));
+
+			ArrayList<String> list = new ArrayList<String>();
+			list.add(Integer.toString(todo.getId()));
+			list.add(todo.getTitle());
+			list.add(todo.getDescription());
+			list.add(todo.getPriority().toString());
+
+			client.senden(new Message_Result(this.getClass(), result, list));
 		} else {
 			result = false;
 			client.senden(new Message_Result(this.getClass(), result));

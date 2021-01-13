@@ -197,14 +197,14 @@ public class App_View extends View<App_Model> {
 		colPriority.setCellValueFactory(new PropertyValueFactory<ToDo, String>("priority"));
 		tableViewToDo.getColumns().add(colPriority);
 
-		// DueDate Spalte
-		colDueDate = new TableColumn<>("DueDate");
-		colDueDate.setMinWidth(200);
-		colDueDate.setCellValueFactory(new PropertyValueFactory<ToDo, String>("dueDate"));
-		tableViewToDo.getColumns().add(colDueDate);
+//		// DueDate Spalte
+//		colDueDate = new TableColumn<>("DueDate");
+//		colDueDate.setMinWidth(200);
+//		colDueDate.setCellValueFactory(new PropertyValueFactory<ToDo, String>("dueDate"));
+//		tableViewToDo.getColumns().add(colDueDate);
 
 		// Finally, attach the tableView to the ObservableList of data
-		tableViewToDo.setItems(model.getToDos());
+//		tableViewToDo.setItems(controller.getTheList());
 
 		return tableViewToDo;
 	}
