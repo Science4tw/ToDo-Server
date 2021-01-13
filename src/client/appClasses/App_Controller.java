@@ -14,8 +14,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import api.LoginHandling;
+import api.ToDoHandling;
 import client.ServiceLocator;
 import client.abstractClasses.Controller;
 import client.commonClasses.Translator;
@@ -36,14 +39,12 @@ import server.Server_ToDoModel;
 import server.ToDo;
 import testOrGarbage.App_Model;
 
-public class App_Controller extends Controller<App_Model, App_View> {
+public class App_Controller extends Controller<App_Model, App_View> implements LoginHandling, ToDoHandling {
 
 	private String token = null;
 
 	private Socket socket = null;
-	private ArrayList<Integer> ids = null;
-	
-	private ObservableList<ToDo> toDos = FXCollections.observableArrayList();
+	private ArrayList<Integer> ids = new ArrayList<Integer>();
 
 	private BufferedWriter bufferedWriter = null;
 	private OutputStreamWriter outputStreamWriter = null;
@@ -59,9 +60,16 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	private boolean usernameValid = false;
 	private boolean passwordValid = false;
 
+	
+	private int lastToDo;
+	private int deletedToDo;
+
 	// Konstruktor
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
+
+//		ToDo todo = new ToDo(111, "TitleTest", Priority.Low, "BeschreibungTest");
+//		toDos.add(todo);
 
 		/**
 		 * DONE - Connect Client with the Server Button Connect
@@ -95,13 +103,20 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		});
 
 		/**
-		 * TODO - CreateToDO
+		 * DONE - CreateToDO
 		 */
 		view.getCreateToDoView().getBtnSave().setOnAction(event -> {
-			
+
 			createToDo(view.getCreateToDoView().getTxtToDo().getText(),
 					view.getCreateToDoView().getCmbPriority().getValue(),
 					view.getCreateToDoView().getTxtDescription().getText());
+		});
+		/**
+		 * TODO - DeleteToDo
+		 */
+		view.getBtnDelete().setOnAction(event -> {
+			ToDo selectedItem = view.getTableViewToDo().getSelectionModel().getSelectedItem();
+			view.getTableViewToDo().getItems().remove(selectedItem);
 		});
 
 		// *** SZENEN WECHSEL ***
@@ -313,21 +328,21 @@ public class App_Controller extends Controller<App_Model, App_View> {
 		view.getChangePasswordView().getBtnSave().setDisable(!valid);
 	}
 
-	private void changePassword(ActionEvent event) {
-
-		// *************NOCH AUSFOMRULIEREN NICHT FERTIG
-		String username = view.getChangePasswordView().getLblUsername().getText();
-		String password = view.getChangePasswordView().getTxtPassword().getText();
-		if (passwordValid) {
-
-			// if (Account.exists(username) != null && Account.checkPassword(password)) {
-			// Account.changePassword(password);
-
-			// }
-			Translator t = ServiceLocator.getServiceLocator().getTranslator();
-			view.setStatus(t.getString("statusLabel.passwordChanged"));
-		}
-	}
+//	private void changePassword(ActionEvent event) {
+//
+//		// *************NOCH AUSFOMRULIEREN NICHT FERTIG
+//		String username = view.getChangePasswordView().getLblUsername().getText();
+//		String password = view.getChangePasswordView().getTxtPassword().getText();
+//		if (passwordValid) {
+//
+//			// if (Account.exists(username) != null && Account.checkPassword(password)) {
+//			// Account.changePassword(password);
+//
+//			// }
+//			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+//			view.setStatus(t.getString("statusLabel.passwordChanged"));
+//		}
+//	}
 
 	// Methode um die Country Szene aus der App_View zu holen
 	private Scene getMainScene() {
@@ -361,7 +376,7 @@ public class App_Controller extends Controller<App_Model, App_View> {
 					while (msg != null) { // Will be null if the server closes the socket
 
 						try {
-							
+
 							msg = bufferedReader.readLine();
 							System.out.println("Received: " + msg);
 							// Break message into individual parts, and remove extra spaces
@@ -369,28 +384,37 @@ public class App_Controller extends Controller<App_Model, App_View> {
 							for (int i = 0; i < parts.length; i++) {
 								parts[i] = parts[i].trim();
 							}
-							
-							if(parts[0].equals("Result") && parts[1].equals("Message_Login") && Boolean.parseBoolean(parts[2]))
-							{
-								token = parts[3];
-							}
-							
-							if(parts[0].equals("Result") && parts[1].equals("Message_ListToDos"))
-							{
-								ids = new ArrayList<Integer>();
-								for(int i = 3; i < parts.length; i++)
-								{
-									ids.add(Integer.parseInt(parts[i]));
-								}
-							}
 
-							if(parts[0].equals("Result") && parts[1].equals("Message_GetToDo"))
-							{
-								toDos.add(new ToDo(parts[4], Priority.valueOf(parts[6]), parts[5]));
-								System.out.println(toDos);
+									if (parts[0].equals("Result")) {
+
+										if (parts[1].equals("Message_Login") && Boolean.parseBoolean(parts[2])) 
+										{
+											token = parts[3];
+										}
+										else if(parts[1].equals("Message_CreateToDo") && Boolean.parseBoolean(parts[2]))
+										{
+											lastToDo = Integer.parseInt(parts[3]);
+											getToDo(lastToDo);
+										}
+										else if (parts[1].equals("Message_GetToDo")) 
+										{
+											model.getToDos().add(new ToDo(Integer.parseInt(parts[3]), parts[4], Priority.valueOf(parts[6]), parts[5]));
+											System.out.println("Liste der ToDo's: " + model.getToDos());
+										}
+										else if (parts[1].equals("Message_ListToDos")) 
+										{
+											for (int i = 3; i < parts.length; i++) {
+												if(!ids.contains(Integer.parseInt(parts[i])))
+												{
+													ids.add(Integer.parseInt(parts[i]));
+												}
+											}
+											
+										}
+										else if (parts[1].equals("Message_DeleteToDo")) {
+											model.getToDos().remove(deletedToDo);
+										}
 							}
-							
-							
 
 						} catch (IOException e) {
 							msg = null; // end loop if we have a communications error
@@ -457,56 +481,44 @@ public class App_Controller extends Controller<App_Model, App_View> {
 				bufferedWriter.newLine();
 				bufferedWriter.flush();
 				System.out.println("Sent: CreateToDo|" + token + "|" + title + "|" + priority + "|" + description);
-				
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}finally {
-				listToDos();
 			}
 
 		}
 	}
-	
-	
-	public void listToDos()
-	{
-		if(isTokenSet())
-		{
+
+	public void listToDos() {
+		if (isTokenSet()) {
 			try {
 				bufferedWriter.write("ListToDos|" + token);
 				bufferedWriter.newLine();
 				bufferedWriter.flush();
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				getToDos();
-			}
-		}
-	}
-	
-	public void getToDos()
-	{
-		System.out.println(ids);
-		if(isTokenSet() && ids !=null)
-		{
-			try {
-				for(Integer id : ids)
-				{
-					bufferedWriter.write("GetToDo|" + token + "|"+ id);
-					bufferedWriter.newLine();
-					bufferedWriter.flush();
-				}
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
+
+
 	
+	public void getToDo(int id) {
+		if (isTokenSet()) {
+
+			try {
+					bufferedWriter.write("GetToDo|" + token + "|" + id);
+					bufferedWriter.newLine();
+					bufferedWriter.flush();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
 
 	public String getToken() {
 		return token;
@@ -515,14 +527,50 @@ public class App_Controller extends Controller<App_Model, App_View> {
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
-	private boolean isTokenSet()
-	{
-		return (token == null)?false:true;
+
+	private boolean isTokenSet() {
+		return (token == null) ? false : true;
 	}
 
-	public ObservableList<ToDo> getTheList(){
-		return toDos;
+
+	@Override
+	public void changePassword(String newPassword) {
+		// TODO Auto-generated method stub
+
 	}
-	
+
+	@Override
+	public void logout() {
+		// TODO Auto-generated method stub
+
+	}
+
+//	@Override
+//	public void getToDo(int id) {
+//		// TODO Auto-generated method stub
+//
+//	}
+
+	@Override
+	public void deleteToDo(int id) {
+		try {
+			bufferedWriter.write("DeleteToDo|" + token + "|" + id);
+			bufferedWriter.newLine();
+			bufferedWriter.flush();
+			deletedToDo = id;
+			System.out.println("Sent: DeleteToDo|" + token + "|" + id);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void listToDos(ArrayList<Integer> ids) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

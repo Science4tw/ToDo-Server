@@ -19,6 +19,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import server.Priority;
 import server.ToDo;
 import testOrGarbage.App_Model;
 
@@ -180,9 +181,9 @@ public class App_View extends View<App_Model> {
 		tableViewToDo.getColumns().add(colID); // Fügen der TableView die Spalte hinzu
 
 		// Title Spalte
-		colToDo = new TableColumn<>("To Do");
+		colToDo = new TableColumn<>("Title");
 		colToDo.setMinWidth(200);
-		colToDo.setCellValueFactory(new PropertyValueFactory<>("To Do"));
+		colToDo.setCellValueFactory(new PropertyValueFactory<>("title"));
 		tableViewToDo.getColumns().add(colToDo);
 
 		// Description Spalte
@@ -204,7 +205,7 @@ public class App_View extends View<App_Model> {
 //		tableViewToDo.getColumns().add(colDueDate);
 
 		// Finally, attach the tableView to the ObservableList of data
-//		tableViewToDo.setItems(controller.getTheList());
+		tableViewToDo.setItems(model.getToDos());
 
 		return tableViewToDo;
 	}
