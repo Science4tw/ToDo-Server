@@ -5,8 +5,6 @@
   -fx-alignment: center-right;
 }
 
-
-
 .text-field {
   -fx-font-size: 14px;
   -fx-font-weight: bold;
@@ -28,7 +26,6 @@
 .infolabel {
 -fx-font-size: 10px;
 -fx-font-weight: bold;
-
 }
 
 .statusLabel {
@@ -39,7 +36,6 @@
     -fx-text-fill: #B30238; 
     -fx-font-size: 14;
 }
-
 
 .titlelabel {
 -fx-font-weight: bold; 
@@ -69,7 +65,6 @@
 	-fx-pref-width: 200px;
 }
 
-
 /*TabelView*/
 .table-view .column-header .label{
    -fx-alignment: CENTER_LEFT;
@@ -83,7 +78,6 @@
 .table-row-cell:selected {
    -fx-background-color: #1577c2;
 }
-
 
 /*MenuBar*/
 .menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
@@ -111,10 +105,6 @@
     -fx-text-fill: white;
     -fx-font-size: 12px;
 }
-
-
-
-
 
 /*Validation*/
 .usernameok {

@@ -8,17 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 import api.LoginHandling;
 import api.ToDoHandling;
 import client.ServiceLocator;
@@ -26,10 +16,6 @@ import client.abstractClasses.Controller;
 import client.commonClasses.Translator;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -39,12 +25,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import server.Account;
-import server.Client;
 import server.Priority;
-import server.Server_ToDoModel;
 import server.ToDo;
 
 public class App_Controller extends Controller<App_Model, App_View> implements LoginHandling, ToDoHandling {
@@ -62,7 +43,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 
 	private boolean connected = false;
 	private boolean created = false;
-	
 
 
 	ServiceLocator serviceLocator;

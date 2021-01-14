@@ -16,28 +16,28 @@ public class Account implements Serializable {
 	private String emailAdress;
 	private String userName;
 	private String password;
-		
+
 	// Liste für die Accounts
 	private static final ArrayList<Account> accounts = new ArrayList<>();
 
-	//für password und hashing
+	// für password und hashing
 	private String hashedPassword;
-	//zum event time-stamps in der application aufzunehmen
-	
-	//generiert krpto zufallswert
+	// zum event time-stamps in der application aufzunehmen
+
+	// generiert krpto zufallswert
 	private static final SecureRandom rand = new SecureRandom();
 	private static final int iterations = 127;
-	//salt value: 64 byte lang
+	// salt value: 64 byte lang
 	private final byte[] salt = new byte[64];
-	
+
 	// Konstruktor
 	public Account(String username, String password) {
 		this.userName = username;
 		this.hashedPassword = hash(password);
 
 	}
-	
-	//Fügt account arrayliste accounts hinzu
+
+	// Fügt account arrayliste accounts hinzu
 	public static void add(Account account) {
 		synchronized (accounts) {
 			accounts.add(account);
@@ -48,28 +48,29 @@ public class Account implements Serializable {
 	public static void remove(Account account) {
 		synchronized (accounts) {
 			for (Iterator<Account> i = accounts.iterator(); i.hasNext();) {
-				if (account == i.next()) i.remove();
+				if (account == i.next())
+					i.remove();
 			}
 		}
 	}
-	
-	//sucht, ob account schon vorhanden ist und gibt diesen zurück, falls ja
+
+	// sucht, ob account schon vorhanden ist und gibt diesen zurück, falls ja
 	public static Account exists(String username) {
 		synchronized (accounts) {
 			for (Account account : accounts) {
-				if (account.userName.equals(username)) return account;
+				if (account.userName.equals(username))
+					return account;
 			}
 		}
 		return null;
 	}
-	
 
-	
 	public boolean checkPassword(String password) {
 		String newHash = hash(password);
 		boolean success = hashedPassword.equals(newHash);
 		return success;
 	}
+
 	public void changePassword(String newPassword) {
 		rand.nextBytes(salt); // password wird mit "salt" geändert
 		this.hashedPassword = hash(newPassword);
@@ -84,7 +85,7 @@ public class Account implements Serializable {
 		rand.nextBytes(token);
 		return bytesToHex(token);
 	}
-	
+
 	// Getter & Setter
 
 	public String getEmailAdress() {
@@ -115,8 +116,7 @@ public class Account implements Serializable {
 		return accounts;
 	}
 
-	
-	//Hashed passwort
+	// Hashed passwort
 	private String hash(String password) {
 		try {
 			char[] chars = password.toCharArray();
@@ -130,16 +130,17 @@ public class Account implements Serializable {
 			return null; // Will never execute, but keeps Java happy
 		}
 	}
-		private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
-		public static String bytesToHex(byte[] bytes) {
-			char[] hexChars = new char[bytes.length * 2];
-			for (int j = 0; j < bytes.length; j++) {
-				int v = bytes[j] & 0xFF;
-				hexChars[j * 2] = hexArray[v >>> 4];
-				hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-			}
-			return new String(hexChars);
+	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+	public static String bytesToHex(byte[] bytes) {
+		char[] hexChars = new char[bytes.length * 2];
+		for (int j = 0; j < bytes.length; j++) {
+			int v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
 		}
+		return new String(hexChars);
+	}
 
 }

@@ -26,7 +26,6 @@ public class JavaFX_App_Template extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
     /**
      * Note: This method is called on the main thread, not the JavaFX
      * Application Thread. This means that we cannot display anything to the

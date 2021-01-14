@@ -167,6 +167,4 @@ public class CreateAccountView extends GridPane {
 		return lblInfo;
 	}
 	
-	
-
 }
