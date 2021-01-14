@@ -18,3 +18,6 @@ Additional Fuctionalitys:
 - Validated input data (on the client)
 - Buttons for Connect, Login, CreateLogin, ChangePassword, Create ToDo, Delete ToDo, Logout
 - Displayed ToDo entries in tableView
+- Shortcuts
+
+Note: wie besprochen, changePassword() ist über das GUI nicht implementiert, aber funktioniert in der Konsole
