@@ -22,6 +22,7 @@ import api.ToDoHandling;
 import client.ServiceLocator;
 import client.abstractClasses.Controller;
 import client.commonClasses.Translator;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,6 +34,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
 import server.Client;
 import server.Priority;
 import server.Server_ToDoModel;
@@ -60,7 +62,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 	private boolean usernameValid = false;
 	private boolean passwordValid = false;
 
-	
 	private int lastToDo;
 	private int deletedToDo;
 
@@ -103,6 +104,22 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		});
 
 		/**
+		 * TODO - Logout
+		 */
+		view.getBtnLogout().setOnAction(event -> {
+			// Platform.runLater(() -> {
+			logout();
+			System.out.println("logout ausgeführt");
+
+//			});
+
+//			view.getStage().close();
+//			
+//			Stage stage = (Stage) getBtnLogout().getScene().getWindow();
+//		    stage.close();
+		});
+
+		/**
 		 * DONE - CreateToDO
 		 */
 		view.getCreateToDoView().getBtnSave().setOnAction(event -> {
@@ -112,11 +129,12 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 					view.getCreateToDoView().getTxtDescription().getText());
 		});
 		/**
-		 * TODO - DeleteToDo
+		 * DONE - DeleteToDo
 		 */
 		view.getBtnDelete().setOnAction(event -> {
 			ToDo selectedItem = view.getTableViewToDo().getSelectionModel().getSelectedItem();
 			view.getTableViewToDo().getItems().remove(selectedItem);
+			view.getTableViewToDo().refresh();
 		});
 
 		// *** SZENEN WECHSEL ***
@@ -385,35 +403,39 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 								parts[i] = parts[i].trim();
 							}
 
-									if (parts[0].equals("Result")) {
+							if (parts[0].equals("Result")) {
 
-										if (parts[1].equals("Message_Login") && Boolean.parseBoolean(parts[2])) 
-										{
-											token = parts[3];
+								if (parts[1].equals("Message_Login") && Boolean.parseBoolean(parts[2])) {
+									token = parts[3];
+									
+								} else if (parts[1].equals("Message_CreateToDo") && Boolean.parseBoolean(parts[2])) {
+									lastToDo = Integer.parseInt(parts[3]);
+									getToDo(lastToDo);
+									
+								} else if (parts[1].equals("Message_GetToDo")) {
+									model.getToDos().add(new ToDo(Integer.parseInt(parts[3]), parts[4],
+											Priority.valueOf(parts[6]), parts[5]));
+									System.out.println("Liste der ToDo's: " + model.getToDos());
+									
+								} else if (parts[1].equals("Message_ListToDos")) {
+									for (int i = 3; i < parts.length; i++) {
+										if (!ids.contains(Integer.parseInt(parts[i]))) {
+											ids.add(Integer.parseInt(parts[i]));
 										}
-										else if(parts[1].equals("Message_CreateToDo") && Boolean.parseBoolean(parts[2]))
-										{
-											lastToDo = Integer.parseInt(parts[3]);
-											getToDo(lastToDo);
-										}
-										else if (parts[1].equals("Message_GetToDo")) 
-										{
-											model.getToDos().add(new ToDo(Integer.parseInt(parts[3]), parts[4], Priority.valueOf(parts[6]), parts[5]));
-											System.out.println("Liste der ToDo's: " + model.getToDos());
-										}
-										else if (parts[1].equals("Message_ListToDos")) 
-										{
-											for (int i = 3; i < parts.length; i++) {
-												if(!ids.contains(Integer.parseInt(parts[i])))
-												{
-													ids.add(Integer.parseInt(parts[i]));
-												}
-											}
-											
-										}
-										else if (parts[1].equals("Message_DeleteToDo")) {
-											model.getToDos().remove(deletedToDo);
-										}
+									}
+
+								} else if (parts[1].equals("Message_DeleteToDo")) {
+									model.getToDos().remove(deletedToDo);
+
+								} else if (parts[1].equals("Message_Logout") && Boolean.parseBoolean(parts[2])) {
+									token = null;
+									Platform.runLater(() -> {
+										view.stop();
+										Platform.exit();
+									});
+
+									System.out.println("view.stop(); & Platform.exit(); ausgeführt");
+								}
 							}
 
 						} catch (IOException e) {
@@ -503,20 +525,19 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		}
 	}
 
-
-	
+	@Override
 	public void getToDo(int id) {
 		if (isTokenSet()) {
 
 			try {
-					bufferedWriter.write("GetToDo|" + token + "|" + id);
-					bufferedWriter.newLine();
-					bufferedWriter.flush();
+				bufferedWriter.write("GetToDo|" + token + "|" + id);
+				bufferedWriter.newLine();
+				bufferedWriter.flush();
 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
 
@@ -532,7 +553,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		return (token == null) ? false : true;
 	}
 
-
 	@Override
 	public void changePassword(String newPassword) {
 		// TODO Auto-generated method stub
@@ -541,15 +561,19 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 
 	@Override
 	public void logout() {
-		// TODO Auto-generated method stub
+		try {
+			bufferedWriter.write("Logout");
+			bufferedWriter.newLine();
+			bufferedWriter.flush();
+
+			System.out.println("Sent: Logout");
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
-
-//	@Override
-//	public void getToDo(int id) {
-//		// TODO Auto-generated method stub
-//
-//	}
 
 	@Override
 	public void deleteToDo(int id) {
