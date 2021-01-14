@@ -9,7 +9,6 @@ public class Server_ToDoModel {
 
 	private int IDCounter = -1;
 
-//	public static ObservableList<ToDo> todos = FXCollections.observableArrayList();
 	private ArrayList<ToDo> todos = new ArrayList<>();
 
 	public int createToDo(ToDo toDo) {

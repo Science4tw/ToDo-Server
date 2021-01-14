@@ -42,7 +42,6 @@ public class Client implements Sendable {
 			@Override
 			public void run() {
 				System.out.println("The " + getClientIDAsText() + " has connected" );
-//				Client.this.senden(new Message_Result(true));
 				
 				try {		
 					while (Client.this.clientSocket != null) {
@@ -118,9 +117,5 @@ public class Client implements Sendable {
 	public Server_ToDoModel getModel() {
 		return model;
 	}
-
-//	public void setModel(Server_ToDoModel model) {
-//		this.model = model;
-//	}
 
 }

@@ -2,10 +2,12 @@ package client.appClasses;
 
 import java.util.Locale;
 import java.util.logging.Logger;
+
 import client.ServiceLocator;
 import client.abstractClasses.View;
 import client.commonClasses.Translator;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,10 +19,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import server.Priority;
 import server.ToDo;
 
 public class App_View extends View<App_Model> {
@@ -62,14 +65,13 @@ public class App_View extends View<App_Model> {
 	private Button btnCreateToDo;
 	private Button btnDelete;
 	private Button btnLogout;
-
+	
 	// 1 (Data Display) die TableView für die ToDos
 	protected TableView<ToDo> tableViewToDo;
 	protected TableColumn<ToDo, Integer> colID;
 	protected TableColumn<ToDo, String> colToDo;
 	protected TableColumn<ToDo, String> colDescription;
 	protected TableColumn<ToDo, String> colPriority;
-	protected TableColumn<ToDo, String> colDueDate;
 
 	// Aktueller Status Label
 	private Label lblStatus;
@@ -112,6 +114,18 @@ public class App_View extends View<App_Model> {
 
 	}
 
+	public Pane createControlPaneStatus() {
+		BorderPane statusBox = new BorderPane();
+		statusBox.setId("StatusBox");
+		this.lblStatus = new Label("");
+		this.lblStatus.getStyleClass().add("statusLabel");
+
+		statusBox.setCenter(this.lblStatus);
+		BorderPane.setAlignment(lblStatus, Pos.CENTER);
+		BorderPane.setMargin(lblStatus, new Insets(12,12,12,12)); 
+		return statusBox;
+		}
+	
 	// Methode um die Kontrollelemente zu erzeugen (Login)
 	public Pane createControlPaneLogin() {
 
@@ -139,6 +153,7 @@ public class App_View extends View<App_Model> {
 		topBox.add(lblPassword, 14, 0);
 		topBox.add(pwFieldPassword, 16, 0);
 		topBox.add(btnLogin, 18, 0);
+        
 		topBox.setHgap(5);
 		topBox.setPadding(new Insets(10, 10, 10, 10));
 
@@ -150,8 +165,8 @@ public class App_View extends View<App_Model> {
 		GridPane bottomBox = new GridPane();
 		bottomBox.setId("BottomBox");
 
-		btnCreateToDo = new Button("Create To Do");
-		btnDelete = new Button("Delete To Do");
+		btnCreateToDo = new Button("Create ToDo");
+		btnDelete = new Button("Delete ToDo");
 		btnLogout = new Button("Logout");
 
 		bottomBox.add(btnCreateToDo, 0, 0);
@@ -175,25 +190,25 @@ public class App_View extends View<App_Model> {
 
 		// ID Spalte
 		colID = new TableColumn<>("ID"); // Erstellen und Beschriftung der Spalte
-		colID.setMinWidth(200);
+		colID.setMinWidth(50);
 		colID.setCellValueFactory(new PropertyValueFactory<>("id")); // Insatnzieren ein Property und übergeben
 		tableViewToDo.getColumns().add(colID); // Fügen der TableView die Spalte hinzu
 
 		// Title Spalte
 		colToDo = new TableColumn<>("Title");
-		colToDo.setMinWidth(200);
+		colToDo.setMinWidth(300);
 		colToDo.setCellValueFactory(new PropertyValueFactory<>("title"));
 		tableViewToDo.getColumns().add(colToDo);
 
 		// Description Spalte
 		colDescription = new TableColumn<>("Description");
-		colDescription.setMinWidth(200);
+		colDescription.setMinWidth(600);
 		colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
 		tableViewToDo.getColumns().add(colDescription);
 
 		// Priority Spalte
 		colPriority = new TableColumn<>("Priority");
-		colPriority.setMinWidth(200);
+		colPriority.setMinWidth(150);
 		colPriority.setCellValueFactory(new PropertyValueFactory<ToDo, String>("priority"));
 		tableViewToDo.getColumns().add(colPriority);
 
@@ -232,7 +247,6 @@ public class App_View extends View<App_Model> {
 	public void setStatus(String message) {
 		this.lblStatus.setText(message); // status = Label
 	}
-	
 
 	// Getter & Setter Tabelview
 	public TableView<ToDo> getTableViewToDo() {
@@ -279,14 +293,6 @@ public class App_View extends View<App_Model> {
 		this.colPriority = colPriority;
 	}
 
-	// Getter & Setter DueDate
-	public TableColumn<ToDo, String> getColDueDate() {
-		return colDueDate;
-	}
-
-	public void setColDueDate(TableColumn<ToDo, String> colDueDate) {
-		this.colDueDate = colDueDate;
-	}
 
 	// Getter & Setter für Menu
 	public MenuItem getMenuHelpShortcuts() {
@@ -498,20 +504,18 @@ public class App_View extends View<App_Model> {
 
 		root.add(createControlPaneLogin(), 0, 1);
 
+		root.add(createControlPaneStatus(), 0, 2);
+		
 		this.tableViewToDo = createTableViewToDo();
-		root.add(tableViewToDo, 0, 2);
+		root.add(tableViewToDo, 0, 3);
 		this.tableViewToDo.prefWidthProperty().bind(root.widthProperty());
 
-		root.add(createControlPaneToDo(), 0, 3);
+		root.add(createControlPaneToDo(), 0, 4);
 
 		// SZENEN
 		createToDoScene = new Scene(createToDoView(), 450, 450);
 		createAccountScene = new Scene(createAccountView(), 450, 450);
 		changePasswordScene = new Scene(changePasswordView(), 450, 450);
-
-		this.lblStatus = new Label("Everything okay");
-		this.lblStatus.getStyleClass().add("statusLabel");
-		root.add(this.lblStatus, 0, 4);
 
 		updateTexts();
 
@@ -535,16 +539,15 @@ public class App_View extends View<App_Model> {
 		lblPort.setText(t.getString("lbl.port"));
 		lblUsername.setText(t.getString("lbl.user"));
 		lblPassword.setText(t.getString("lbl.password"));
-		
-		
+
 		btnLogin.setText(t.getString("button.login"));
 		btnCreateToDo.setText(t.getString("button.create"));
 		btnDelete.setText(t.getString("button.delete"));
 		btnLogout.setText(t.getString("button.logout"));
 		btnConnect.setText(t.getString("button.connect"));
-		
+
 		lblStatus.setText(t.getString("statusLabel.beginning"));
-		
+
 		stage.setTitle(t.getString("program.name"));
 
 		// Labels CreateToDoView
@@ -562,7 +565,6 @@ public class App_View extends View<App_Model> {
 		getCreateAccountView().getLblPassword().setText(t.getString("createAccountView.label.password"));
 		getCreateAccountView().getLblInfo().setText(t.getString("createAccountView.label.info"));
 
-
 		// Buttons CreateAccountView
 		getCreateAccountView().getBtnSave().setText(t.getString("createAccountView.button.save"));
 		getCreateAccountView().getBtnCancel().setText(t.getString("createAccountView.button.cancel"));
@@ -576,6 +578,12 @@ public class App_View extends View<App_Model> {
 		// Buttons ChangePasswordView
 		getChangePasswordView().getBtnSave().setText(t.getString("changePasswordView.button.save"));
 		getChangePasswordView().getBtnCancel().setText(t.getString("changePasswordView.button.cancel"));
+
+		// TabelView dependency
+		getTableViewToDo().getColumns().get(0).setText(t.getString("row.Tableview.ID"));
+		getTableViewToDo().getColumns().get(1).setText(t.getString("row.Tableview.ToDo"));
+		getTableViewToDo().getColumns().get(2).setText(t.getString("row.Tableview.description"));
+		getTableViewToDo().getColumns().get(3).setText(t.getString("row.Tableview.priority"));
 
 	}
 

@@ -31,18 +31,27 @@
 
 }
 
+.statusLabel {
+-fx-padding: 5.0px;
+    -fx-min-width: 100.0;
+    -fx-max-width: 1000.0;
+    -fx-alignment: center; 	
+    -fx-text-fill: #B30238; 
+    -fx-font-size: 14;
+}
+
+
 .titlelabel {
 -fx-font-weight: bold; 
 -fx-font-size: 16;
 }
 
-.statusLabel {
--fx-padding: 5.0px;
--fx-alignment: center;
--fx-font-size: 14px;
--fx-font-weight: bold;
-}
 #TopBox {
+	-fx-alignment: center;
+	-fx-spacing: 5px;
+}
+
+#StatusBox {
 	-fx-alignment: center;
 	-fx-spacing: 5px;
 }

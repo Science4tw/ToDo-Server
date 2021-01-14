@@ -23,7 +23,6 @@ public class Account implements Serializable {
 	//für password und hashing
 	private String hashedPassword;
 	//zum event time-stamps in der application aufzunehmen
-	private Instant lastLogin;
 	
 	//generiert krpto zufallswert
 	private static final SecureRandom rand = new SecureRandom();
@@ -35,7 +34,6 @@ public class Account implements Serializable {
 	public Account(String username, String password) {
 		this.userName = username;
 		this.hashedPassword = hash(password);
-		this.lastLogin = Instant.now();
 
 	}
 	
@@ -65,10 +63,11 @@ public class Account implements Serializable {
 		return null;
 	}
 	
+
+	
 	public boolean checkPassword(String password) {
 		String newHash = hash(password);
 		boolean success = hashedPassword.equals(newHash);
-		if (success) this.lastLogin = Instant.now();
 		return success;
 	}
 	public void changePassword(String newPassword) {

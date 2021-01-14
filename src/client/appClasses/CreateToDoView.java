@@ -165,13 +165,11 @@ public class CreateToDoView extends GridPane {
 		this.cmbPriority = cmbPriority;
 	}
 	
-
 	
 	//Getter & Setter Controls
 	public Button getBtnSave() {
 		return btnSave;
 	}
-
 
 	public Button getBtnCancel() {
 		return btnCancel;
@@ -194,11 +192,9 @@ public class CreateToDoView extends GridPane {
 		return lblToDo;
 	}
 
-	
 	public Label getLblPriority() {
 		return lblPriority;
 	}
 
-	
 
 }
