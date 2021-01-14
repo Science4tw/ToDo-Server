@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -31,6 +33,9 @@ import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
@@ -39,7 +44,6 @@ import server.Client;
 import server.Priority;
 import server.Server_ToDoModel;
 import server.ToDo;
-import testOrGarbage.App_Model;
 
 public class App_Controller extends Controller<App_Model, App_View> implements LoginHandling, ToDoHandling {
 
@@ -57,10 +61,14 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 	private boolean connected = false;
 
 	ServiceLocator serviceLocator;
+	Translator t = ServiceLocator.getServiceLocator().getTranslator();;
 
-	// Speichert Wert für gültige Textfelder
+	// Speichert Wert für gültige Felder
 	private boolean usernameValid = false;
 	private boolean passwordValid = false;
+	private boolean toDoValid = false;
+	private boolean descriptionValid = false;
+	private boolean priorityValid = false;
 
 	private int lastToDo;
 	private int deletedToDo;
@@ -69,15 +77,15 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 	public App_Controller(App_Model model, App_View view) {
 		super(model, view);
 
-//		ToDo todo = new ToDo(111, "TitleTest", Priority.Low, "BeschreibungTest");
-//		toDos.add(todo);
-
 		/**
 		 * DONE - Connect Client with the Server Button Connect
 		 */
 		view.getBtnConnect().setOnAction(event -> {
 			System.out.println("User klickte: 'connect'");
 			connect(view.getTxtIP().getText(), Integer.parseInt(view.getTxtPort().getText()));
+			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+			view.setStatus(t.getString("statusLabel.connected"));// setzt statuslabel
+			view.getBtnConnect().setDisable(true); // deaktiviert button nach erfolgreichem Login
 
 		});
 
@@ -88,11 +96,15 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 			try {
 				System.out.println("User klickte: 'create Account' (CreateLogin)");
 				createLogin(view.getCreateAccountView().getTxtUsername().getText(),
-						view.getCreateAccountView().getTxtPassword().getText());
+						view.getCreateAccountView().getPwFieldPassword().getText());
 				view.getStage().setScene(getMainScene());
+				Translator t = ServiceLocator.getServiceLocator().getTranslator();
+				view.setStatus(t.getString("statusLabel.accountCreated")); // setzt StatusLabel
+
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				view.setStatus(t.getString("statusLabel.accountCreatedFailed"));
 			}
 		});
 
@@ -100,7 +112,10 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		 * DONE - Login
 		 */
 		view.getBtnLogin().setOnAction(event -> {
-			login(view.getTxtUsername().getText(), view.getTxtPassword().getText());
+			login(view.getTxtUsername().getText(), view.getPwFieldPassword().getText());
+			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+			view.setStatus(t.getString("statusLabel.loggedIn"));// setzt status label
+			enableLogoutButton();// aktiviert Logout/CreateToDo Button, wenn login erfolgreich
 		});
 
 		/**
@@ -110,13 +125,14 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 			// Platform.runLater(() -> {
 			logout();
 			System.out.println("logout ausgeführt");
+			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+			view.setStatus(t.getString("statusLabel.loggedout"));// setzt status label
+			// buttons wieder deaktivieren
+			view.getBtnLogin().setDisable(true);
+			view.getBtnLogout().setDisable(true);
+			view.getBtnCreateToDo().setDisable(true);
+			view.getBtnConnect().setDisable(false); // connect wird wieder aktiviert bei logout
 
-//			});
-
-//			view.getStage().close();
-//			
-//			Stage stage = (Stage) getBtnLogout().getScene().getWindow();
-//		    stage.close();
 		});
 
 		/**
@@ -127,14 +143,44 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 			createToDo(view.getCreateToDoView().getTxtToDo().getText(),
 					view.getCreateToDoView().getCmbPriority().getValue(),
 					view.getCreateToDoView().getTxtDescription().getText());
+			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+			view.setStatus(t.getString("statusLabel.todocreated"));// setzt statuslabel
+
 		});
 		/**
 		 * DONE - DeleteToDo
 		 */
 		view.getBtnDelete().setOnAction(event -> {
 			ToDo selectedItem = view.getTableViewToDo().getSelectionModel().getSelectedItem();
-			view.getTableViewToDo().getItems().remove(selectedItem);
-			view.getTableViewToDo().refresh();
+			Alert alertDelete = new Alert(AlertType.CONFIRMATION);
+			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+			alertDelete.setTitle(t.getString("alert.alertDelete.title"));
+			alertDelete.setHeaderText(t.getString("alert.alertDelete.header"));
+
+			Button okButton = (Button) alertDelete.getDialogPane().lookupButton(ButtonType.OK);
+			okButton.setText(t.getString("alert.buttonOk"));
+			Button cancelButton = (Button) alertDelete.getDialogPane().lookupButton(ButtonType.CANCEL);
+			cancelButton.setText(t.getString("alert.buttonCancel"));
+
+			Optional<ButtonType> result = alertDelete.showAndWait();
+			if (result.get() == ButtonType.OK) {
+				view.getTableViewToDo().getItems().remove(selectedItem);
+				view.getTableViewToDo().refresh();
+				view.setStatus(t.getString("statusLabel.deletedToDo"));
+			} else {
+				// nothing
+			}
+		});
+
+		// Alert für MenuItem Shortcut
+		view.getMenuHelpShortcuts().setOnAction(e -> {
+			Alert shortcutinfo = new Alert(AlertType.INFORMATION);
+			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+			shortcutinfo.setTitle(t.getString("alert.shortcutinfo.title"));
+			shortcutinfo.setHeaderText(t.getString("alert.shortcutinfo.header"));
+			shortcutinfo.setContentText(t.getString("alert.shortcutinfo.content"));
+			shortcutinfo.showAndWait();
+
 		});
 
 		// *** SZENEN WECHSEL ***
@@ -154,15 +200,18 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 
 		// Szenenwechsel bei cancel button in Create Todo View
 		view.getCreateToDoView().getBtnCancel().setOnAction(event -> {
+			view.getCreateToDoView().reset();
 			view.getStage().setScene(getMainScene());
 		});
 		// Szenenwechsel bei Cancel button von Create Account view
 		view.getCreateAccountView().getBtnCancel().setOnAction(event -> {
+			view.getCreateAccountView().reset();
 			view.getStage().setScene(getMainScene());
 		});
 
 		// Szenenwechsel bei Cancel button von Change Password view
 		view.getChangePasswordView().getBtnCancel().setOnAction(event -> {
+			view.getChangePasswordView().reset();
 			view.getStage().setScene(getMainScene());
 		});
 
@@ -173,20 +222,34 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 			validateUsername(newValue);
 		});
 
-		view.getTxtPassword().textProperty().addListener((obserable, oldValue, newValue) -> {
+		view.getPwFieldPassword().textProperty().addListener((obserable, oldValue, newValue) -> {
 			validatePassword(newValue);
 		});
 		view.getCreateAccountView().getTxtUsername().textProperty().addListener((obserable, oldValue, newValue) -> {
 			validateUsername(newValue);
 		});
 
-		view.getCreateAccountView().getTxtPassword().textProperty().addListener((obserable, oldValue, newValue) -> {
+		view.getCreateAccountView().getPwFieldPassword().textProperty().addListener((obserable, oldValue, newValue) -> {
 			validatePassword(newValue);
 		});
 
-		view.getChangePasswordView().getTxtPassword().textProperty().addListener((obserable, oldValue, newValue) -> {
-			validatePassword(newValue);
+		view.getChangePasswordView().getPwFieldPassword().textProperty()
+				.addListener((obserable, oldValue, newValue) -> {
+					validatePassword(newValue);
+				});
+
+		view.getCreateToDoView().getTxtToDo().textProperty().addListener((obserable, oldValue, newValue) -> {
+			validateToDo(newValue);
 		});
+
+		view.getCreateToDoView().getTxtDescription().textProperty().addListener((obserable, oldValue, newValue) -> {
+			validateDescription(newValue);
+		});
+
+		view.getCreateToDoView().getCmbPriority().getSelectionModel().selectedItemProperty()
+				.addListener((obserable, oldValue, newValue) -> {
+					validatePriority(newValue);
+				});
 
 		/**
 		 * 3 Wenn kein Zeile in der TableView angewählt ist "DEAKTIVIERE" den DELETE
@@ -195,16 +258,16 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		view.getBtnDelete().disableProperty()
 				.bind(Bindings.isEmpty(view.getTableViewToDo().getSelectionModel().getSelectedItems()));
 
-//		/**
-//		 * Buttons beim ersten Aufruf, leeren Feldern oder keiner Änderung deaktivieren
-//		 */
-//		view.getBtnLogin().setDisable(true);
-//		view.getBtnLogout().setDisable(true);
-//		// view.getBtnCreate().setDisable(true);
-//
-//		view.getCreateToDoView().getBtnSave().setDisable(true);
-//		view.getCreateAccountView().getBtnSave().setDisable(true);
-//		view.getChangePasswordView().getBtnSave().setDisable(true);
+		/**
+		 * Buttons beim ersten Aufruf, leeren Feldern oder keiner Änderung deaktivieren
+		 */
+		view.getBtnLogin().setDisable(true);
+		view.getBtnLogout().setDisable(true);
+		view.getBtnCreateToDo().setDisable(true);
+
+		view.getCreateToDoView().getBtnSave().setDisable(true);
+		view.getCreateAccountView().getBtnSave().setDisable(true);
+		view.getChangePasswordView().getBtnSave().setDisable(true);
 
 		/**
 		 * register ourselves to handle window-closing event
@@ -223,6 +286,63 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 			closingAlert.showAndWait().filter(r -> r != ButtonType.OK).ifPresent(r -> evt.consume());
 		});
 
+		/**
+		 * Shortcuts
+		 */
+		// set shortcut ctrl'c to create to do
+		view.getBtnCreateToDo().getScene().getAccelerators()
+				.put(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN), new Runnable() {
+					public void run() {
+						view.getBtnCreateToDo().fire();
+					}
+				});
+
+		// set shortcut ctrl'd to delete to do
+		view.getBtnDelete().getScene().getAccelerators()
+				.put(new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN), new Runnable() {
+					public void run() {
+						view.getBtnDelete().fire();
+					}
+				});
+		// set shortcut ctrl's to save ToDo, Password, Account
+		view.getCreateToDoView().getBtnSave().getScene().getAccelerators()
+				.put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN), new Runnable() {
+					public void run() {
+						view.getCreateToDoView().getBtnSave().fire();
+					}
+				});
+		view.getCreateAccountView().getBtnSave().getScene().getAccelerators()
+				.put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN), new Runnable() {
+					public void run() {
+						view.getCreateAccountView().getBtnSave().fire();
+					}
+				});
+		view.getChangePasswordView().getBtnSave().getScene().getAccelerators()
+				.put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN), new Runnable() {
+					public void run() {
+						view.getChangePasswordView().getBtnSave().fire();
+					}
+				});
+		// set shortcut ctrl'c to cancel ToDo, Password, Account
+		view.getCreateToDoView().getBtnCancel().getScene().getAccelerators()
+				.put(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN), new Runnable() {
+					public void run() {
+						view.getCreateToDoView().getBtnCancel().fire();
+					}
+				});
+		view.getCreateAccountView().getBtnCancel().getScene().getAccelerators()
+				.put(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN), new Runnable() {
+					public void run() {
+						view.getCreateAccountView().getBtnCancel().fire();
+					}
+				});
+		view.getChangePasswordView().getBtnCancel().getScene().getAccelerators()
+				.put(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN), new Runnable() {
+					public void run() {
+						view.getChangePasswordView().getBtnCancel().fire();
+					}
+				});
+
 		serviceLocator = ServiceLocator.getServiceLocator();
 		serviceLocator.getLogger().info("Application controller initialized");
 	}
@@ -236,7 +356,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 	// Für Username (Emailadresse)
 	private void validateUsername(String newValue) {
 		boolean valid = false; // email not ok
-
 		// Split on '@': must give us two not-empty parts
 		String[] addressParts = newValue.split("@");
 		if (addressParts.length == 2 && !addressParts[0].isEmpty() && !addressParts[1].isEmpty()) {
@@ -249,118 +368,184 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 				String[] domainParts = addressParts[1].split("\\."); // Backslash hebt special characters aus
 				if (domainParts.length >= 2) { // erwartet 2 teile für provider
 					valid = true;
-
 					for (String s : domainParts) {
 						if (s.length() < 2)
 							valid = false;
 					}
 				}
 			}
+		}
+		// FARBEN neutralisieren
+		view.getTxtUsername().getStyleClass().remove("usernameNotOk");
+		view.getTxtUsername().getStyleClass().remove("usernameok");
+		view.getCreateAccountView().getTxtUsername().getStyleClass().remove("usernameNotOk");
+		view.getCreateAccountView().getTxtUsername().getStyleClass().remove("usernameok");
 
-			// Farben neutralisieren
-			view.getTxtUsername().getStyleClass().remove("usernameNotOk");
-			view.getTxtUsername().getStyleClass().remove("usernameok");
-
-			view.getCreateAccountView().getTxtUsername().getStyleClass().remove("usernameNotOk");
-			view.getCreateAccountView().getTxtUsername().getStyleClass().remove("usernameok");
-
-			// Farben setzen, rot = invalid, grün = valid
-			if (valid) {
-				view.getTxtUsername().getStyleClass().add("usernameok");
-				view.getCreateAccountView().getTxtUsername().getStyleClass().add("usernameok");
-
-			} else {
-				view.getTxtUsername().getStyleClass().add("usernameNotOk");
-				view.getCreateAccountView().getTxtUsername().getStyleClass().add("usernameNotOk");
-			}
-
-			// Speichert true/false-Wert für Button aktivieren
+		if (valid) {
+			view.getTxtUsername().getStyleClass().add("usernameok"); // setzt css auf grün
 			usernameValid = valid;
-			// Aktiviert Button, wenn alles korrekt
 			enableLoginButton();
+		} else {
+			view.getTxtUsername().getStyleClass().add("usernameNotOk");// setzt css auf rot
+		}
+		if (valid) {
+			view.getCreateAccountView().getTxtUsername().getStyleClass().add("usernameok");
+			usernameValid = valid;
 			enableCreateAccountButton();
-			enableChangePasswordButton();
+		} else {
+			view.getCreateAccountView().getTxtUsername().getStyleClass().add("usernameNotOk");
 		}
 	}
 
 	// für Password
 	public void validatePassword(String newValue) {
-
 		boolean valid = false; // password not ok
 		String password = newValue;
-		Translator t = ServiceLocator.getServiceLocator().getTranslator();
 
-		if (password.length() < 3 || password.length() > 20 || password.matches("(.[0-9].)")
-				|| password.matches("(.[A-Z].)") || password.matches("(.[a-z].)")) {
+		if (password.length() < 3 || password.length() > 20 || !password.matches("(.*[0-9].*)")
+				|| !password.matches("(.*[A-Z].*)") || !password.matches("(.*[a-z].*)")) {
 			valid = false;
 		} else {
 			valid = true;
 		}
-		// Farben neutralisieren
-		view.getTxtPassword().getStyleClass().remove("passwordNotOk");
-		view.getTxtUsername().getStyleClass().remove("passwordOk");
-		view.getCreateAccountView().getTxtPassword().getStyleClass().remove("passwordNotOk");
-		view.getCreateAccountView().getTxtUsername().getStyleClass().remove("passwordOk");
-		view.getChangePasswordView().getTxtPassword().getStyleClass().remove("passwordNotOk");
 
+		// Farben neutralisieren
+		view.getPwFieldPassword().getStyleClass().remove("passwordNotOk");
+		view.getCreateAccountView().getPwFieldPassword().getStyleClass().remove("passwordNotOk");
+		view.getChangePasswordView().getPwFieldPassword().getStyleClass().remove("passwordNotOk");
+
+		// Für App_View
 		if (valid) {
-			view.getTxtPassword().getStyleClass().add("passwordOk"); // setzt css auf grün
-			view.getCreateAccountView().getTxtPassword().getStyleClass().add("passwordOk"); // setzt css auf grün
-			view.getChangePasswordView().getTxtPassword().getStyleClass().add("passwordOk"); // setzt css auf grün
+			view.getPwFieldPassword().getStyleClass().add("passwordOk"); // setzt css auf grün
+			passwordValid = valid;
+			enableLoginButton();
 
 		} else {
-			view.getTxtPassword().getStyleClass().add("passwordNotOk");// setzt css auf rot
-			view.getCreateAccountView().getTxtPassword().getStyleClass().add("passwordNotOk");// setzt css auf rot
-			view.getChangePasswordView().getTxtPassword().getStyleClass().add("passwordNotOk");// setzt css auf rot
+			view.getPwFieldPassword().getStyleClass().add("passwordNotOk");// setzt css auf rot
+
+		}
+		// für CreateAccount view
+		if (valid) {
+			view.getCreateAccountView().getPwFieldPassword().getStyleClass().add("passwordOk"); // setzt css auf grün
+			passwordValid = valid;
+			enableCreateAccountButton();
+
+		} else {
+			view.getCreateAccountView().getPwFieldPassword().getStyleClass().add("passwordNotOk");// setzt css auf rot
+
+		}
+		// für changepasswort view
+		if (valid) {
+			view.getChangePasswordView().getPwFieldPassword().getStyleClass().add("passwordOk"); // setzt css auf grün
+			passwordValid = valid;
+			enableChangePasswordButton();
+
+		} else {
+			view.getChangePasswordView().getPwFieldPassword().getStyleClass().add("passwordNotOk");// setzt css auf rot
 
 		}
 
-		// Speichert true/false-Wert für Button aktivieren
-		passwordValid = valid;
+	}
 
+	private void validateToDo(String newValue) {
+		boolean valid = false;
+		String toDo = newValue;
+
+		if (toDo.length() > 0) {
+			valid = true;
+		}
+
+		// Farben neutralisieren
+		view.getCreateToDoView().getTxtToDo().getStyleClass().remove("inputNotOk");
+		view.getCreateToDoView().getStyleClass().remove("inputOk");
+
+		// Farben setzen, rot = invalid, grün = valid
+		if (valid) {
+			view.getCreateToDoView().getTxtToDo().getStyleClass().add("inputOk");
+		} else {
+			view.getCreateToDoView().getTxtToDo().getStyleClass().add("inputNotOk");
+		}
+		// Speichert true/false-Wert für Button aktivieren
+		toDoValid = valid;
 		// Aktiviert Button, wenn alles korrekt
-		enableLoginButton();
-		enableCreateAccountButton();
-		enableChangePasswordButton();
+		enableCreateToDoButton();
+	}
+
+	private void validateDescription(String newValue) {
+		boolean valid = false;
+		String description = newValue;
+
+		if (description.length() > 0) {
+			valid = true;
+		}
+
+		// Farben neutralisieren
+		view.getCreateToDoView().getTxtDescription().getStyleClass().remove("inputNotOk");
+		view.getCreateToDoView().getStyleClass().remove("inputOk");
+
+		// Farben setzen, rot = invalid, grün = valid
+		if (valid) {
+			view.getCreateToDoView().getTxtDescription().getStyleClass().add("inputOk");
+		} else {
+			view.getCreateToDoView().getTxtDescription().getStyleClass().add("inputNotOk");
+		}
+		// Speichert true/false-Wert für Button aktivieren
+		descriptionValid = valid;
+		// Aktiviert Button, wenn alles korrekt
+		enableCreateToDoButton();
+	}
+
+	private void validatePriority(Priority newValue) {
+		boolean valid = false;
+		boolean value = view.getCreateToDoView().getCmbPriority().getSelectionModel().isEmpty();
+
+		view.getCreateToDoView().getCmbPriority().getStyleClass().remove("comboboxOk");
+		view.getCreateToDoView().getCmbPriority().getStyleClass().remove("comboboxNotOk");
+
+		if (!value) {
+			valid = true;
+			view.getCreateToDoView().getCmbPriority().getStyleClass().add("comboboxOk");
+		}
+
+		priorityValid = valid;
+		enableCreateToDoButton();
 
 	}
 
+	// Bei gültigem Passwort und Username > Login Button aktivieren
 	private void enableLoginButton() {
 		boolean valid = passwordValid & usernameValid;
 		view.getBtnLogin().setDisable(!valid);
-		// *********NOCH àNDERN: SetDisable bei erfolgreichem Login und Login button
-		// disablen
-		view.getBtnCreateToDo().setDisable(!valid);
-		view.getBtnLogout().setDisable(!valid);
 
 	}
 
+	// bei erfolgreichem Login > Logout und CreateToDo Button aktivieren
+	private void enableLogoutButton() {
+		boolean valid = true;
+
+		view.getBtnLogin().setDisable(valid);
+		view.getBtnCreateToDo().setDisable(!valid);
+		view.getBtnLogout().setDisable(!valid);
+	}
+
+	// bei erfolgreichem Account erstellen > Save Button aktivieren
 	private void enableCreateAccountButton() {
 		boolean valid = passwordValid & usernameValid;
 		view.getCreateAccountView().getBtnSave().setDisable(!valid);
 
 	}
 
+	// bei erfolgreichem Change Passwort > Save Button aktivieren
 	private void enableChangePasswordButton() {
 		boolean valid = passwordValid & usernameValid;
 		view.getChangePasswordView().getBtnSave().setDisable(!valid);
 	}
 
-//	private void changePassword(ActionEvent event) {
-//
-//		// *************NOCH AUSFOMRULIEREN NICHT FERTIG
-//		String username = view.getChangePasswordView().getLblUsername().getText();
-//		String password = view.getChangePasswordView().getTxtPassword().getText();
-//		if (passwordValid) {
-//
-//			// if (Account.exists(username) != null && Account.checkPassword(password)) {
-//			// Account.changePassword(password);
-//
-//			// }
-//			Translator t = ServiceLocator.getServiceLocator().getTranslator();
-//			view.setStatus(t.getString("statusLabel.passwordChanged"));
-//		}
-//	}
+	// Aktiviert Button Save ToDo, wenn alle Felder != leer, Inhalt egal
+	private void enableCreateToDoButton() {
+		boolean valid = toDoValid & descriptionValid & priorityValid;
+		view.getCreateToDoView().getBtnSave().setDisable(!valid);
+	}
 
 	// Methode um die Country Szene aus der App_View zu holen
 	private Scene getMainScene() {
@@ -407,16 +592,16 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 
 								if (parts[1].equals("Message_Login") && Boolean.parseBoolean(parts[2])) {
 									token = parts[3];
-									
+
 								} else if (parts[1].equals("Message_CreateToDo") && Boolean.parseBoolean(parts[2])) {
 									lastToDo = Integer.parseInt(parts[3]);
 									getToDo(lastToDo);
-									
+
 								} else if (parts[1].equals("Message_GetToDo")) {
 									model.getToDos().add(new ToDo(Integer.parseInt(parts[3]), parts[4],
 											Priority.valueOf(parts[6]), parts[5]));
 									System.out.println("Liste der ToDo's: " + model.getToDos());
-									
+
 								} else if (parts[1].equals("Message_ListToDos")) {
 									for (int i = 3; i < parts.length; i++) {
 										if (!ids.contains(Integer.parseInt(parts[i]))) {
@@ -482,6 +667,7 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 	public void login(String userName, String password) {
 		if (connected) {
 			try {
+				view.getChangePasswordView().setLblCurrentUsername(userName);
 				bufferedWriter.write("Login|" + userName + "|" + password);
 				bufferedWriter.newLine();
 				bufferedWriter.flush();

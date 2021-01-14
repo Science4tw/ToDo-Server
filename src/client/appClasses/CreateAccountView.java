@@ -3,11 +3,11 @@ package client.appClasses;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import testOrGarbage.App_Model;
 
 // 0
 public class CreateAccountView extends GridPane {
@@ -24,7 +24,7 @@ public class CreateAccountView extends GridPane {
 	// 1
 	// Textfelder
 	private TextField txtUsername = new TextField();
-	private TextField txtPassword = new TextField();
+	private PasswordField pwFieldPassword = new PasswordField();
 
 	// 1 Buttons 
 	protected Button btnSave = new Button("Save");
@@ -61,7 +61,7 @@ public class CreateAccountView extends GridPane {
 		pane.add(txtUsername, 1, 1);
 
 		pane.add(lblPassword, 0, 2);
-		pane.add(txtPassword, 1, 2);
+		pane.add(pwFieldPassword, 1, 2);
 		pane.add(lblInfo, 1, 3);
 
 		pane.setVgap(5);
@@ -87,7 +87,7 @@ public class CreateAccountView extends GridPane {
 	 */
 	public void reset() {
 		this.txtUsername.setText("");
-		this.txtPassword.setText("");
+		this.pwFieldPassword.setText("");
 	}
 
 	// Getter (Model, Controller, Stage)
@@ -119,16 +119,16 @@ public class CreateAccountView extends GridPane {
 		return txtUsername;
 	}
 
-	public TextField getTxtPassword() {
-		return txtPassword;
+	public PasswordField getPwFieldPassword() {
+		return pwFieldPassword;
 	}
 
 	public void setTxtUsername(TextField txtUsername) {
 		this.txtUsername = txtUsername;
 	}
 
-	public void setTxtPassword(TextField txtPassword) {
-		this.txtPassword = txtPassword;
+	public void setPwFieldPassword(PasswordField pwFieldPassword) {
+		this.pwFieldPassword = pwFieldPassword;
 	}
 	
 	//Getter & Setter Controls

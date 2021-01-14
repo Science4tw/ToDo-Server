@@ -1,4 +1,4 @@
-
+/*Controlls and common stuff*/
 .label {
   -fx-font-size: 14px;
   -fx-font-weight: bold;
@@ -42,7 +42,6 @@
 -fx-font-size: 14px;
 -fx-font-weight: bold;
 }
-
 #TopBox {
 	-fx-alignment: center;
 	-fx-spacing: 5px;
@@ -62,7 +61,53 @@
 }
 
 
+/*TabelView*/
+.table-view .column-header .label{
+   -fx-alignment: CENTER_LEFT;
+}
 
+.table-view .cell{
+  -fx-cell-size: 30;
+  -fx-alignment: CENTER_LEFT;
+   
+}
+.table-row-cell:selected {
+   -fx-background-color: #1577c2;
+}
+
+
+/*MenuBar*/
+.menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
+    -fx-background-color: #000000, 
+	linear-gradient(#7ebcea, #2f4b8f),
+	linear-gradient(#426ab7, #263e75),
+	linear-gradient(#395cab, #223768);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+.menu-item .label:hover{
+    -fx-background-color: #000000, 
+	linear-gradient(#7ebcea, #2f4b8f),
+	linear-gradient(#426ab7, #263e75),
+	linear-gradient(#395cab, #223768);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+.menu-item:focused {
+    -fx-background-color: #000000, 
+	linear-gradient(#7ebcea, #2f4b8f),
+	linear-gradient(#426ab7, #263e75),
+	linear-gradient(#395cab, #223768);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+
+
+
+
+/*Validation*/
 .usernameok {
   -fx-text-fill: green;
 }
@@ -76,5 +121,20 @@
 }
 
 .passwordNotOk {
+  -fx-text-fill: red;
+}
+.comboboxOk {
+  -fx-outer-border: green;
+}
+
+.comboboxNotOk {
+  -fx-outer-border: red;
+}
+
+.inputOk {
+  -fx-text-fill: green;
+}
+
+.inputNotOk {
   -fx-text-fill: red;
 }

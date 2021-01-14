@@ -5,12 +5,12 @@ import client.commonClasses.Translator;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import server.Account;
-import testOrGarbage.App_Model;
 
 public class ChangePasswordView extends GridPane {
 
@@ -26,7 +26,7 @@ public class ChangePasswordView extends GridPane {
 	private Label lblInfo;
 	// 1
 	// Textfelder
-	private TextField txtPassword = new TextField();
+	private PasswordField pwFieldPassword = new PasswordField();
 
 	// 1 Buttons 
 	protected Button btnSave = new Button("Save");
@@ -58,7 +58,7 @@ public class ChangePasswordView extends GridPane {
 		lblInfo = new Label("Passwortbedingungen");
 		lblInfo.getStyleClass().add("infolabel");
 		
-		lblCurrentUsername = new Label("Methode für aktuellen username noch ergänzen");
+		lblCurrentUsername = new Label("");
 				
 		
 		
@@ -69,7 +69,7 @@ public class ChangePasswordView extends GridPane {
 		pane.add(lblCurrentUsername, 1, 1);
 
 		pane.add(lblPassword, 0, 2);
-		pane.add(txtPassword, 1, 2);
+		pane.add(pwFieldPassword, 1, 2);
 		pane.add(lblInfo, 1, 3);
 
 		pane.setVgap(5);
@@ -94,7 +94,7 @@ public class ChangePasswordView extends GridPane {
 	 * Methode um die TextFelder und Combobox zu leeren
 	 */
 	public void reset() {
-		this.txtPassword.setText("");
+		this.pwFieldPassword.setText("");
 	}
 
 	// Getter (Model, Controller, Stage)
@@ -123,11 +123,11 @@ public class ChangePasswordView extends GridPane {
 
 	// Getter & Setter TextField
 		
-	public TextField getTxtPassword() {
-		return txtPassword;
+	public PasswordField getPwFieldPassword() {
+		return pwFieldPassword;
 	}
-	public void setTxtPassword(TextField txtPassword) {
-		this.txtPassword = txtPassword;
+	public void setPwFieldPassword(PasswordField pwFieldPassword) {
+		this.pwFieldPassword = pwFieldPassword;
 	}
 	
 	//Getter & Setter Controls
@@ -168,11 +168,9 @@ public class ChangePasswordView extends GridPane {
 	public Label getLblCurrentUsername() {
 		return lblCurrentUsername;
 	}
-
 	
-
-	public void setLblCurrentUsername(Label lblCurrentUsername) {
-		this.lblCurrentUsername = lblCurrentUsername;
+	public void setLblCurrentUsername(String username) {
+		this.lblCurrentUsername.setText(username); 
 	}
 	
 	

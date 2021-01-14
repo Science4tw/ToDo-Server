@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -21,7 +22,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import server.Priority;
 import server.ToDo;
-import testOrGarbage.App_Model;
 
 public class App_View extends View<App_Model> {
 
@@ -40,8 +40,7 @@ public class App_View extends View<App_Model> {
 	private Scene changePasswordScene;
 
 	// Menu
-	protected Menu menuFile;
-	protected Menu menuFileLanguage;
+	protected Menu menuLanguage;
 	protected Menu menuAccount;
 	protected MenuItem menuAccountCreate;
 	protected MenuItem menuAccountPassword;
@@ -58,7 +57,7 @@ public class App_View extends View<App_Model> {
 	private Label lblUsername;
 	private TextField txtUsername;
 	private Label lblPassword;
-	private TextField txtPassword;
+	private PasswordField pwFieldPassword;
 	private Button btnLogin;
 	private Button btnCreateToDo;
 	private Button btnDelete;
@@ -127,7 +126,7 @@ public class App_View extends View<App_Model> {
 		lblUsername = new Label("Username");
 		txtUsername = new TextField("");
 		lblPassword = new Label("Password");
-		txtPassword = new TextField("");
+		pwFieldPassword = new PasswordField();
 		btnLogin = new Button("Login");
 
 		topBox.add(lblIP, 0, 0);
@@ -138,7 +137,7 @@ public class App_View extends View<App_Model> {
 		topBox.add(lblUsername, 10, 0);
 		topBox.add(txtUsername, 12, 0);
 		topBox.add(lblPassword, 14, 0);
-		topBox.add(txtPassword, 16, 0);
+		topBox.add(pwFieldPassword, 16, 0);
 		topBox.add(btnLogin, 18, 0);
 		topBox.setHgap(5);
 		topBox.setPadding(new Insets(10, 10, 10, 10));
@@ -197,12 +196,6 @@ public class App_View extends View<App_Model> {
 		colPriority.setMinWidth(200);
 		colPriority.setCellValueFactory(new PropertyValueFactory<ToDo, String>("priority"));
 		tableViewToDo.getColumns().add(colPriority);
-
-//		// DueDate Spalte
-//		colDueDate = new TableColumn<>("DueDate");
-//		colDueDate.setMinWidth(200);
-//		colDueDate.setCellValueFactory(new PropertyValueFactory<ToDo, String>("dueDate"));
-//		tableViewToDo.getColumns().add(colDueDate);
 
 		// Finally, attach the tableView to the ObservableList of data
 		tableViewToDo.setItems(model.getToDos());
@@ -386,12 +379,12 @@ public class App_View extends View<App_Model> {
 		this.txtUsername = txtUsername;
 	}
 
-	public TextField getTxtPassword() {
-		return txtPassword;
+	public PasswordField getPwFieldPassword() {
+		return pwFieldPassword;
 	}
 
-	public void setTxtPassword(TextField txtPassword) {
-		this.txtPassword = txtPassword;
+	public void setPwFieldPassword(PasswordField pwFieldPassword) {
+		this.pwFieldPassword = pwFieldPassword;
 	}
 
 	// Getter & Setter für Stage & Controller
@@ -477,13 +470,11 @@ public class App_View extends View<App_Model> {
 		Logger logger = sl.getLogger();
 
 		MenuBar menuBar = new MenuBar();
-		menuFile = new Menu();
-		menuFileLanguage = new Menu();
-		menuFile.getItems().add(menuFileLanguage);
+		menuLanguage = new Menu();
 
 		for (Locale locale : sl.getLocales()) {
 			MenuItem language = new MenuItem(locale.getLanguage());
-			menuFileLanguage.getItems().add(language);
+			menuLanguage.getItems().add(language);
 			language.setOnAction(event -> {
 				sl.getConfiguration().setLocalOption("Language", locale.getLanguage());
 				sl.setTranslator(new Translator(locale.getLanguage()));
@@ -500,7 +491,7 @@ public class App_View extends View<App_Model> {
 		menuAccountPassword = new MenuItem("Passwort ändern");
 		menuAccount.getItems().addAll(menuAccountCreate, menuAccountPassword);
 
-		menuBar.getMenus().addAll(menuAccount, menuFile, menuHelp);
+		menuBar.getMenus().addAll(menuAccount, menuLanguage, menuHelp);
 
 		GridPane root = new GridPane();
 		root.add(menuBar, 0, 0);
@@ -532,8 +523,7 @@ public class App_View extends View<App_Model> {
 		Translator t = ServiceLocator.getServiceLocator().getTranslator();
 
 		// The menu entries
-		menuFile.setText(t.getString("program.menu.file"));
-		menuFileLanguage.setText(t.getString("program.menu.language"));
+		menuLanguage.setText(t.getString("program.menu.language"));
 		menuHelp.setText(t.getString("program.menu.help"));
 		menuHelpShortcuts.setText(t.getString("program.menu.help.shortcuts"));
 		menuAccount.setText(t.getString("program.menu.account"));
@@ -551,6 +541,7 @@ public class App_View extends View<App_Model> {
 		btnCreateToDo.setText(t.getString("button.create"));
 		btnDelete.setText(t.getString("button.delete"));
 		btnLogout.setText(t.getString("button.logout"));
+		btnConnect.setText(t.getString("button.connect"));
 		
 		lblStatus.setText(t.getString("statusLabel.beginning"));
 		
