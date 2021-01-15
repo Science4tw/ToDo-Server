@@ -25,6 +25,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
+import server.Account;
 import server.Priority;
 import server.ToDo;
 
@@ -42,7 +43,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 	private InputStreamReader inputStreamReader = null;
 
 	private boolean connected = false;
-	private boolean created = false;
 
 	ServiceLocator serviceLocator;
 	Translator t = ServiceLocator.getServiceLocator().getTranslator();;
@@ -98,8 +98,8 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		 */
 		view.getBtnLogin().setOnAction(event -> {
 			login(view.getTxtUsername().getText(), view.getPwFieldPassword().getText());
-			Translator t = ServiceLocator.getServiceLocator().getTranslator();
-			view.setStatus(t.getString("statusLabel.loggedIn"));// setzt status label
+			//Translator t = ServiceLocator.getServiceLocator().getTranslator();
+			//view.setStatus(t.getString("statusLabel.loggedIn"));// setzt status label
 			enableLogoutButton();// aktiviert Logout/CreateToDo Button, wenn login erfolgreich
 		});
 
@@ -503,7 +503,7 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 
 	// Bei gültigem Passwort und Username > Login Button aktivieren
 	private void enableLoginButton() {
-		boolean valid = usernameValid & passwordValid & created;
+		boolean valid = usernameValid & passwordValid;
 		view.getBtnLogin().setDisable(!valid);
 	}
 
@@ -641,7 +641,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 				bufferedWriter.flush();
 
 				System.out.println("Sent: CreateLogin|" + userName + "|" + password);
-				created = true;
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -654,13 +653,22 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 	 * Wenn "Login" Buttonm gedrückt wird mit Username & password einloggen
 	 */
 	public void login(String userName, String password) {
-		if (connected & created) {
+		if (connected) {
 			try {
 				view.getChangePasswordView().setLblCurrentUsername(userName);
 				bufferedWriter.write("Login|" + userName + "|" + password);
 				bufferedWriter.newLine();
 				bufferedWriter.flush();
 				System.out.println("Sent: Login|" + userName + "|" + password);
+				
+				if (Account.exists(userName) != null) {
+					Translator t = ServiceLocator.getServiceLocator().getTranslator();
+					view.setStatus(t.getString("statusLabel.loggedIn"));// setzt statuslabel
+					
+				} else {
+					view.setStatus(t.getString("statusLabel.loggedInFailed"));// setzt statuslabel
+				}
+					
 
 			} catch (Exception e) {
 //				connected = false;
