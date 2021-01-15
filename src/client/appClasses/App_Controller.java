@@ -98,8 +98,8 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		 */
 		view.getBtnLogin().setOnAction(event -> {
 			login(view.getTxtUsername().getText(), view.getPwFieldPassword().getText());
-			//Translator t = ServiceLocator.getServiceLocator().getTranslator();
-			//view.setStatus(t.getString("statusLabel.loggedIn"));// setzt status label
+			Translator t = ServiceLocator.getServiceLocator().getTranslator();
+			view.setStatus(t.getString("statusLabel.loggedIn"));// setzt status label
 			enableLogoutButton();// aktiviert Logout/CreateToDo Button, wenn login erfolgreich
 		});
 
@@ -660,15 +660,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 				bufferedWriter.newLine();
 				bufferedWriter.flush();
 				System.out.println("Sent: Login|" + userName + "|" + password);
-				
-				if (Account.exists(userName) != null) {
-					Translator t = ServiceLocator.getServiceLocator().getTranslator();
-					view.setStatus(t.getString("statusLabel.loggedIn"));// setzt statuslabel
-					
-				} else {
-					view.setStatus(t.getString("statusLabel.loggedInFailed"));// setzt statuslabel
-				}
-					
 
 			} catch (Exception e) {
 //				connected = false;
