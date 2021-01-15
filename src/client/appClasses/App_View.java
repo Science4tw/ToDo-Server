@@ -1,5 +1,8 @@
 package client.appClasses;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -18,10 +21,14 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import server.ToDo;
 
@@ -64,7 +71,7 @@ public class App_View extends View<App_Model> {
 	private Button btnCreateToDo;
 	private Button btnDelete;
 	private Button btnLogout;
-	
+
 	// 1 (Data Display) die TableView für die ToDos
 	protected TableView<ToDo> tableViewToDo;
 	protected TableColumn<ToDo, Integer> colID;
@@ -74,6 +81,7 @@ public class App_View extends View<App_Model> {
 
 	// Aktueller Status Label
 	private Label lblStatus;
+	private final Image ICON = new Image("/resource/icon.png");
 
 	// 0 Konstruktor
 	public App_View(Stage stage, App_Model model) {
@@ -114,17 +122,21 @@ public class App_View extends View<App_Model> {
 	}
 
 	public Pane createControlPaneStatus() {
-		BorderPane statusBox = new BorderPane();
+		HBox statusBox = new HBox();
 		statusBox.setId("StatusBox");
 		this.lblStatus = new Label("");
 		this.lblStatus.getStyleClass().add("statusLabel");
+		ImageView imgView = new ImageView(this.ICON);
+		imgView.setFitWidth(20);
+		imgView.setPreserveRatio(true);
+		imgView.setSmooth(true);
 
-		statusBox.setCenter(this.lblStatus);
-		BorderPane.setAlignment(lblStatus, Pos.CENTER);
-		BorderPane.setMargin(lblStatus, new Insets(12,12,12,12)); 
+		statusBox.getChildren().addAll(imgView, this.lblStatus);
+		HBox.setMargin(lblStatus, new Insets(10, 10, 10, 5));
+
 		return statusBox;
-		}
-	
+	}
+
 	// Methode um die Kontrollelemente zu erzeugen (Login)
 	public Pane createControlPaneLogin() {
 
@@ -152,7 +164,7 @@ public class App_View extends View<App_Model> {
 		topBox.add(lblPassword, 14, 0);
 		topBox.add(pwFieldPassword, 16, 0);
 		topBox.add(btnLogin, 18, 0);
-        
+
 		topBox.setHgap(5);
 		topBox.setPadding(new Insets(10, 10, 10, 10));
 
@@ -291,7 +303,6 @@ public class App_View extends View<App_Model> {
 	public void setColPriority(TableColumn<ToDo, String> colPriority) {
 		this.colPriority = colPriority;
 	}
-
 
 	// Getter & Setter für Menu
 	public MenuItem getMenuHelpShortcuts() {
@@ -504,7 +515,7 @@ public class App_View extends View<App_Model> {
 		root.add(createControlPaneLogin(), 0, 1);
 
 		root.add(createControlPaneStatus(), 0, 2);
-		
+
 		this.tableViewToDo = createTableViewToDo();
 		root.add(tableViewToDo, 0, 3);
 		this.tableViewToDo.prefWidthProperty().bind(root.widthProperty());

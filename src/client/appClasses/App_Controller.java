@@ -44,7 +44,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 	private boolean connected = false;
 	private boolean created = false;
 
-
 	ServiceLocator serviceLocator;
 	Translator t = ServiceLocator.getServiceLocator().getTranslator();;
 
@@ -211,12 +210,10 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 			validateUsername(newValue);
 		});
 
-
 		view.getPwFieldPassword().textProperty().addListener((obserable, oldValue, newValue) -> {
 			validatePassword(newValue);
 		});
 
-		
 		view.getCreateAccountView().getTxtUsername().textProperty().addListener((obserable, oldValue, newValue) -> {
 			validateUsername(newValue);
 		});
@@ -373,7 +370,7 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		view.getCreateAccountView().getTxtUsername().getStyleClass().remove("usernameNotOk");
 		view.getCreateAccountView().getTxtUsername().getStyleClass().remove("usernameok");
 
-		if (valid){
+		if (valid) {
 			view.getTxtUsername().getStyleClass().add("usernameok"); // setzt css auf grün
 			usernameValid = valid;
 			enableLoginButton();
@@ -388,7 +385,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 			view.getCreateAccountView().getTxtUsername().getStyleClass().add("usernameNotOk");
 		}
 	}
-	
 
 	// für Password
 	public void validatePassword(String newValue) {
@@ -439,8 +435,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		}
 
 	}
-
-	
 
 	private void validateToDo(String newValue) {
 		boolean valid = false;
@@ -512,7 +506,6 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 		boolean valid = usernameValid & passwordValid & created;
 		view.getBtnLogin().setDisable(!valid);
 	}
-	
 
 	// bei erfolgreichem Login > Logout und CreateToDo Button aktivieren
 	private void enableLogoutButton() {
@@ -646,10 +639,10 @@ public class App_Controller extends Controller<App_Model, App_View> implements L
 				bufferedWriter.write("CreateLogin|" + userName + "|" + password);
 				bufferedWriter.newLine();
 				bufferedWriter.flush();
-			
+
 				System.out.println("Sent: CreateLogin|" + userName + "|" + password);
 				created = true;
-				
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
