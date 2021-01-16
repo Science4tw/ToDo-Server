@@ -16,7 +16,7 @@ Additional Fuctionalitys:
 - Multilingual (used JAT)
 - Asking for IP address & port of server, Username & Password
 - Validated input data (on the client)
-- Buttons for Connect, Login, CreateLogin, ChangePassword, Create ToDo, Delete ToDo, Logout
+- MVC CLient supports API features Connect, Login, CreateLogin, Create ToDo, Delete ToDo, Logout
 - Displayed ToDo entries in tableView
 - Shortcuts
 
